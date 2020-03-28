@@ -8,3 +8,4 @@ class InvalidItemError(Exception):
 @dataclass
 class Item:
     quantity: int
+    product_name: str
