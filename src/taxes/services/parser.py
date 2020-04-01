@@ -1,7 +1,10 @@
 import re
 from decimal import Decimal
 
-from taxes.services.receipt.entities.item import InvalidItemError
+
+class ParserError:
+    class MalformedInput(Exception):
+        pass
 
 
 RE_SPACE = r'\s'
@@ -28,7 +31,7 @@ def parse_item(input: str):
     """ Parses the :param input: string and returns an :param Item: """
     parsed = match_item_parts(input)
     if not parsed:
-        raise InvalidItemError()
+        raise ParserError.MalformedInput()
     return {
         'quantity': int(parsed['quantity']),
         'product_name': parsed['product_name'].lower(),

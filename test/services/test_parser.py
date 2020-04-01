@@ -2,8 +2,7 @@ from decimal import Decimal
 
 import pytest
 
-from taxes.services.receipt.entities.item import InvalidItemError
-from taxes.services.parser import parse_item
+from taxes.services import parser
 
 
 @pytest.mark.parametrize('text, quantity, product_name, unit_price', [
@@ -65,10 +64,10 @@ from taxes.services.parser import parse_item
 ])
 def test_returns_parsed_item_from_matching_string(text, quantity, product_name, unit_price):
     expected = {'quantity': quantity, 'product_name': product_name, 'unit_price': unit_price}
-    assert expected == parse_item(text)
+    assert expected == parser.parse_item(text)
 
 
-@pytest.mark.parametrize('input', [
+@pytest.mark.parametrize('text', [
     pytest.param('', id='emtpy string'),
     pytest.param('-1 book at 12.49', id='negative quantity'),
     pytest.param('1.0 book at 12.49', id='non-integer quantity'),
@@ -79,6 +78,6 @@ def test_returns_parsed_item_from_matching_string(text, quantity, product_name, 
     pytest.param('1 item at', id='missing unit price amount'),
     pytest.param('1 item 12.32', id='missing unit price intro tag'),
 ])
-def test_raises_error_if_string_does_not_match(input):
-    with pytest.raises(InvalidItemError):
-        parse_item(input)
+def test_raises_error_if_string_does_not_match(text):
+    with pytest.raises(parser.ParserError.MalformedInput):
+        parser.parse_item(text)
