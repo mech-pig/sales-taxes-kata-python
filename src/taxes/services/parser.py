@@ -1,7 +1,7 @@
 import re
 from decimal import Decimal
 
-from taxes.services.receipt.entities.item import Item, InvalidItemError
+from taxes.services.receipt.entities.item import InvalidItemError
 
 
 RE_SPACE = r'\s'
@@ -29,8 +29,8 @@ def parse_item(input: str):
     parsed = match_item_parts(input)
     if not parsed:
         raise InvalidItemError()
-    return Item(
-        quantity=int(parsed['quantity']),
-        product_name=parsed['product_name'].lower(),
-        unit_price=Decimal(parsed['unit_price']),
-    )
+    return {
+        'quantity': int(parsed['quantity']),
+        'product_name': parsed['product_name'].lower(),
+        'unit_price': Decimal(parsed['unit_price']),
+    }
