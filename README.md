@@ -12,14 +12,17 @@ except the ones belonging to categories that are exempt:
 - book
 - food
 - medical
+
 Import duty is an additional sales tax applicable on all imported
 articles at a rate of `5%`, with no exemptions.
 For a shelf price of p and a tax rate of t% the tax amount is
 `p*t/100` rounded up to the nearest `0.05`.
+
 Customers making a purchase receive a receipt containing:
 - a list of items (quantity, article name and price with taxes)
 - sales taxes due
 - total to be paid (including taxes)
+
 ### Examples
 #### Purchase 1
 ##### Basket
