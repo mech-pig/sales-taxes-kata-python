@@ -2,8 +2,8 @@ from decimal import Decimal
 
 import pytest
 
-from taxes.item import Item, InvalidItemError
-from taxes.parser import parse_item
+from taxes.services.receipt.entities.item import Item, InvalidItemError
+from taxes.services.parser import parse_item
 
 
 @pytest.mark.parametrize('input, expected', [

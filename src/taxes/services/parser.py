@@ -1,7 +1,7 @@
 import re
 from decimal import Decimal
 
-from taxes.item import Item, InvalidItemError
+from taxes.services.receipt.entities.item import Item, InvalidItemError
 
 
 RE_SPACE = r'\s'
