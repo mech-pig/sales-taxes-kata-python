@@ -1,4 +1,5 @@
 from dataclasses import dataclass
+from decimal import Decimal
 
 
 class InvalidItemError(Exception):
@@ -9,3 +10,4 @@ class InvalidItemError(Exception):
 class Item:
     quantity: int
     product_name: str
+    unit_price: Decimal
