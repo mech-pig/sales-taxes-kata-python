@@ -8,6 +8,7 @@ authors = ["mechpig <7295856+mech-pig@users.noreply.github.com>"]
 [tool.poetry.dependencies]
 python = "^3.8"
 # ci
+behave = { version = "^1.2", optional = true }
 flake8 = { version = "^3.7", optional = true }
 pytest = { version = "^5.3", optional = true }
 pytest-cov = { version = "^2.8", optional = true }
@@ -22,11 +23,17 @@ pytest-watch = "^4.2.0"
 lint = [
   "flake8",
 ]
-test = [
+test-e2e = [
+  "behave",
+]
+test-unit = [
   "pytest",
   "pytest-cov",
   "pytest-mock",
 ]
+
+[tool.poetry.scripts]
+receipt = "taxes.gateways.cli:main"
 
 [build-system]
 requires = ["poetry>=1.0"]
