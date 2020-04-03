@@ -7,7 +7,7 @@ help: ## show this help
 
 # Development
 
-POETRY_INSTALL_EXTRAS = --extras "test" --extras "lint"
+POETRY_INSTALL_EXTRAS = --extras "lint" --extras "test-unit" --extras "test-e2e"
 PYTEST_WATCH_ARGS = --doctest-modules -vv
 PYTEST_TEST_ARGS = $(PYTEST_WATCH_ARGS) --maxfail=2 -rf -vv --strict --cov src --cov-branch
 
@@ -28,7 +28,14 @@ tdd: ## start a TDD session (re-run test on saves)
 	poetry run ptw -- $(PYTEST_WATCH_ARGS)
 
 .PHONY: test
-test: ## run all tests
+test: test-unit test-e2e  ## run all tests
+
+.PHONY: test-e2e
+test-e2e: test-e2e  ## run end-to-end tests
+	poetry run behave
+
+.PHONY: test-unit
+test-unit: ## run unit tests
 	poetry run pytest $(PYTEST_TEST_ARGS)
 
 
