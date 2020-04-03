@@ -2,10 +2,6 @@ from dataclasses import dataclass
 from decimal import Decimal
 
 
-class InvalidItemError(Exception):
-    pass
-
-
 class ItemError:
     class NonPositiveQuantity(Exception):
         def __init__(self, value):
