@@ -2,7 +2,7 @@ from dataclasses import dataclass
 from decimal import Decimal
 
 
-class ItemError:
+class ArticleError:
     class NonPositiveQuantity(Exception):
         def __init__(self, value):
             super().__init__(f'quantity must be positive: {value}')
@@ -13,25 +13,25 @@ class ItemError:
 
 
 @dataclass
-class Item:
+class Article:
     quantity: int
     product_name: str
     unit_price: Decimal
 
 
 def create(quantity: int, product_name: str, unit_price: Decimal):
-    """ Creates an item.
+    """ Creates an article.
 
-    Item quantity must be greater than zero, unit_price can't be less than
+    Article quantity must be greater than zero, unit_price can't be less than
     zero.
     """
     if quantity <= 0:
-        raise ItemError.NonPositiveQuantity(quantity)
+        raise ArticleError.NonPositiveQuantity(quantity)
 
     if unit_price < 0:
-        raise ItemError.NegativeUnitPrice(unit_price)
+        raise ArticleError.NegativeUnitPrice(unit_price)
 
-    return Item(
+    return Article(
         quantity=quantity,
         product_name=product_name,
         unit_price=unit_price,
