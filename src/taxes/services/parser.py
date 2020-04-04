@@ -13,7 +13,7 @@ RE_GROUP_PRODUCT_NAME = r'(?P<product_name>.+)'
 RE_UNIT_PRICE_TAG = r'at'
 RE_GROUP_UNIT_PRICE = r'(?P<unit_price>\d+(\.\d*)?)'
 
-RE_ITEM = ''.join([
+RE_PARSE_ROW = ''.join([
     r'^',
     RE_SPACE.join([
         RE_GROUP_QUANTITY,
@@ -24,12 +24,13 @@ RE_ITEM = ''.join([
     r'$',
 ])
 
-match_item_parts = re.compile(RE_ITEM).match
+parse_row = re.compile(RE_PARSE_ROW).match
 
 
 def parse_item(input: str):
-    """ Parses the :param input: string and returns an :param Item: """
-    parsed = match_item_parts(input)
+    """ Parses the :param input: string and returns a dictionary representing
+    the parsed item. """
+    parsed = parse_row(input)
     if not parsed:
         raise ParserError.MalformedInput()
     return {
