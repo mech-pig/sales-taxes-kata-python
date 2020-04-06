@@ -3,7 +3,7 @@ from unittest.mock import Mock
 
 import pytest
 
-from taxes.services.receipt.entities import article, basket
+from taxes.services.receipt.entities import article, basket, product
 from taxes.services.receipt.use_cases import create_basket
 
 
@@ -20,11 +20,11 @@ basket_test_cases = pytest.mark.parametrize(
         pytest.param(
             {
                 'articles': [
-                    article.Article(product_name='A', unit_price=Decimal('1'), quantity=1),
+                    article.create(product_name='A', product_unit_price=Decimal('1'), quantity=1),
                 ],
                 'expected': basket.Basket(
                     articles={
-                        basket.Product(name='A', unit_price=Decimal('1')): 1,
+                        product.create(name='A', unit_price=Decimal('1')): 1,
                     }
                 ),
             },
@@ -33,15 +33,15 @@ basket_test_cases = pytest.mark.parametrize(
         pytest.param(
             {
                 'articles': [
-                    article.Article(product_name='B', unit_price=Decimal('1'), quantity=2),
-                    article.Article(product_name='A', unit_price=Decimal('1'), quantity=3),
-                    article.Article(product_name='C', unit_price=Decimal('1'), quantity=5),
+                    article.create(product_name='B', product_unit_price=Decimal('1'), quantity=2),
+                    article.create(product_name='A', product_unit_price=Decimal('1'), quantity=3),
+                    article.create(product_name='C', product_unit_price=Decimal('1'), quantity=5),
                 ],
                 'expected': basket.Basket(
                     articles={
-                        basket.Product(name='A', unit_price=Decimal('1')): 3,
-                        basket.Product(name='B', unit_price=Decimal('1')): 2,
-                        basket.Product(name='C', unit_price=Decimal('1')): 5,
+                        product.create(name='A', unit_price=Decimal('1')): 3,
+                        product.create(name='B', unit_price=Decimal('1')): 2,
+                        product.create(name='C', unit_price=Decimal('1')): 5,
                     }
                 ),
             },
@@ -50,16 +50,16 @@ basket_test_cases = pytest.mark.parametrize(
         pytest.param(
             {
                 'articles': [
-                    article.Article(product_name='B', unit_price=Decimal('1'), quantity=1),
-                    article.Article(product_name='A', unit_price=Decimal('1'), quantity=1),
-                    article.Article(product_name='B', unit_price=Decimal('1'), quantity=5),
-                    article.Article(product_name='B', unit_price=Decimal('1'), quantity=3),
-                    article.Article(product_name='A', unit_price=Decimal('1'), quantity=2),
+                    article.create(product_name='B', product_unit_price=Decimal('1'), quantity=1),
+                    article.create(product_name='A', product_unit_price=Decimal('1'), quantity=1),
+                    article.create(product_name='B', product_unit_price=Decimal('1'), quantity=5),
+                    article.create(product_name='B', product_unit_price=Decimal('1'), quantity=3),
+                    article.create(product_name='A', product_unit_price=Decimal('1'), quantity=2),
                 ],
                 'expected': basket.Basket(
                     articles={
-                        basket.Product(name='A', unit_price=Decimal('1')): 3,
-                        basket.Product(name='B', unit_price=Decimal('1')): 9,
+                        product.create(name='A', unit_price=Decimal('1')): 3,
+                        product.create(name='B', unit_price=Decimal('1')): 9,
                     }
                 ),
             },
@@ -68,13 +68,13 @@ basket_test_cases = pytest.mark.parametrize(
         pytest.param(
             {
                 'articles': [
-                    article.Article(product_name='A', unit_price=Decimal('1'), quantity=2),
-                    article.Article(product_name='A', unit_price=Decimal('1.1'), quantity=3),
+                    article.create(product_name='A', product_unit_price=Decimal('1'), quantity=2),
+                    article.create(product_name='A', product_unit_price=Decimal('1.1'), quantity=3),
                 ],
                 'expected': basket.Basket(
                     articles={
-                        basket.Product(name='A', unit_price=Decimal('1')): 2,
-                        basket.Product(name='A', unit_price=Decimal('1.1')): 3,
+                        product.create(name='A', unit_price=Decimal('1')): 2,
+                        product.create(name='A', unit_price=Decimal('1.1')): 3,
                     }
                 ),
             },

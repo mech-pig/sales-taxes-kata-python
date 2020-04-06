@@ -1,5 +1,18 @@
 from dataclasses import dataclass
 from decimal import Decimal
+from typing import NewType
+
+
+from taxes.services.receipt.entities import product
+
+
+Quantity = NewType('Quantity', int)
+
+
+@dataclass(frozen=True)
+class Article:
+    quantity: Quantity
+    product: product.Product
 
 
 class ArticleError:
@@ -7,19 +20,8 @@ class ArticleError:
         def __init__(self, value):
             super().__init__(f'quantity must be positive: {value}')
 
-    class NegativeUnitPrice(Exception):
-        def __init__(self, value):
-            super().__init__(f'unit_price can\'t be negative: {value}')
 
-
-@dataclass
-class Article:
-    quantity: int
-    product_name: str
-    unit_price: Decimal
-
-
-def create(quantity: int, product_name: str, unit_price: Decimal):
+def create(quantity: int, product_name: str, product_unit_price: Decimal):
     """ Creates an article.
 
     Article quantity must be greater than zero, unit_price can't be less than
@@ -28,11 +30,10 @@ def create(quantity: int, product_name: str, unit_price: Decimal):
     if quantity <= 0:
         raise ArticleError.NonPositiveQuantity(quantity)
 
-    if unit_price < 0:
-        raise ArticleError.NegativeUnitPrice(unit_price)
-
     return Article(
+        product=product.create(
+            name=product_name,
+            unit_price=product_unit_price,
+        ),
         quantity=quantity,
-        product_name=product_name,
-        unit_price=unit_price,
     )

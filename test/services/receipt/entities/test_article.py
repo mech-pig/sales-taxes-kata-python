@@ -2,27 +2,29 @@ from decimal import Decimal
 
 import pytest
 
-from taxes.services.receipt.entities import article
+from taxes.services.receipt.entities import article, product
 
 
 @pytest.fixture
-def article_kwargs_fixture():
+def make_article_kwargs():
     def build(**overrides):
         return {
             'quantity': 12,
             'product_name': 'a-cool-product',
-            'unit_price': Decimal('12.23'),
+            'product_unit_price': Decimal('12.23'),
             **overrides,
         }
     return build
 
 
-def test_create_returns_article(article_kwargs_fixture):
-    kwargs = article_kwargs_fixture()
+def test_create_returns_article(make_article_kwargs):
+    kwargs = make_article_kwargs()
     expected = article.Article(
+        product=product.Product(
+            name=kwargs['product_name'],
+            unit_price=kwargs['product_unit_price'],
+        ),
         quantity=kwargs['quantity'],
-        product_name=kwargs['product_name'],
-        unit_price=kwargs['unit_price'],
     )
     assert expected == article.create(**kwargs)
 
@@ -31,24 +33,9 @@ def test_create_returns_article(article_kwargs_fixture):
     pytest.param(0, id='quantity = 0'),
     pytest.param(-12, id='quantity < 0'),
 ])
-def test_article_quantity_cannot_be_non_positive(article_kwargs_fixture, quantity):
-    kwargs = article_kwargs_fixture(quantity=quantity)
+def test_article_quantity_cannot_be_non_positive(make_article_kwargs, quantity):
+    kwargs = make_article_kwargs(quantity=quantity)
     error_cls = article.ArticleError.NonPositiveQuantity
     error_msg = f'quantity must be positive: {quantity}'
     with pytest.raises(error_cls, match=error_msg):
         article.create(**kwargs)
-
-
-def test_article_unit_price_cannot_be_negative(article_kwargs_fixture):
-    unit_price = Decimal('-1')
-    kwargs = article_kwargs_fixture(unit_price=unit_price)
-    error_cls = article.ArticleError.NegativeUnitPrice
-    error_msg = f'unit_price can\'t be negative: {unit_price}'
-    with pytest.raises(error_cls, match=error_msg):
-        article.create(**kwargs)
-
-
-def test_article_can_have_unit_price_equal_to_zero(article_kwargs_fixture):
-    unit_price = 0
-    kwargs = article_kwargs_fixture(unit_price=unit_price)
-    assert unit_price == article.create(**kwargs).unit_price

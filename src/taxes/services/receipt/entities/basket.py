@@ -1,23 +1,14 @@
 from copy import deepcopy
-from decimal import Decimal
 from dataclasses import dataclass
-from typing import Mapping, NewType
+from typing import Mapping
 
-from taxes.services.receipt.entities import article
-
-
-Quantity = NewType('Quantity', int)
-
-
-@dataclass
-class Basket:
-    articles: Mapping['Product', Quantity]
+from taxes.services.receipt.entities.article import Article, Quantity
+from taxes.services.receipt.entities.product import Product
 
 
 @dataclass(frozen=True)
-class Product:
-    name: str
-    unit_price: Decimal
+class Basket:
+    articles: Mapping[Product, Quantity]
 
 
 def empty():
@@ -33,15 +24,15 @@ def get_quantity(product: Product, basket: Basket) -> Quantity:
     return basket.articles.get(product, 0)
 
 
-def add_article(article: article.Article, basket: Basket) -> Basket:
+def add_article(article: Article, basket: Basket) -> Basket:
     """ Add :param article: to :param basket:.
 
     If the product is already in the basket, its quantity is increased by
     :param article.quantity:. """
-    product = Product(name=article.product_name, unit_price=article.unit_price)
-    updated_quantity = get_quantity(product, basket) + article.quantity
+    product_to_add = deepcopy(article.product)
+    quantity = get_quantity(product_to_add, basket) + article.quantity
 
     return Basket(articles={
         **deepcopy(basket.articles),
-        product: updated_quantity,
+        product_to_add: quantity,
     })
