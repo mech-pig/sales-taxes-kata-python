@@ -3,8 +3,8 @@ from unittest.mock import Mock
 
 import pytest
 
-from taxes.services.receipt.entities import article, basket, product
-from taxes.services.receipt.use_cases import create_basket
+from taxes.services.basket.entities import article, basket, product
+from taxes.services.basket.use_cases import create_basket
 
 
 basket_test_cases = pytest.mark.parametrize(

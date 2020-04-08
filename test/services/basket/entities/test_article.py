@@ -2,7 +2,7 @@ from decimal import Decimal
 
 import pytest
 
-from taxes.services.receipt.entities import article, product
+from taxes.services.basket.entities import article, product
 
 
 @pytest.fixture

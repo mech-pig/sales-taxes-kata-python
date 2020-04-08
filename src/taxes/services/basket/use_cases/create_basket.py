@@ -2,7 +2,7 @@ from dataclasses import dataclass
 from functools import reduce
 from typing import Callable, Iterable
 
-from taxes.services.receipt.entities import article, basket
+from taxes.services.basket.entities import article, basket
 
 
 @dataclass

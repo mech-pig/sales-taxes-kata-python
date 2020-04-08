@@ -2,8 +2,8 @@ from copy import deepcopy
 from dataclasses import dataclass
 from typing import Mapping
 
-from taxes.services.receipt.entities.article import Article, Quantity
-from taxes.services.receipt.entities.product import Product
+from taxes.services.basket.entities.article import Article, Quantity
+from taxes.services.basket.entities.product import Product
 
 
 @dataclass(frozen=True)
