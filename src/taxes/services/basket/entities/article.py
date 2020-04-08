@@ -3,7 +3,7 @@ from decimal import Decimal
 from typing import NewType
 
 
-from taxes.services.receipt.entities import product
+from taxes.services.basket.entities import product
 
 
 Quantity = NewType('Quantity', int)

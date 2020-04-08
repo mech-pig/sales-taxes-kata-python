@@ -2,7 +2,7 @@ from decimal import Decimal
 
 import pytest
 
-from taxes.services.receipt.entities import article, basket, product
+from taxes.services.basket.entities import article, basket, product
 
 
 def test_empty_returns_basket_without_articles():
