@@ -1,6 +1,6 @@
+from copy import deepcopy
 from dataclasses import dataclass
 from decimal import Decimal
-from functools import reduce
 from typing import List
 
 from taxes.services.receipt.entities import tax
@@ -29,31 +29,31 @@ class ReceiptItem:
 
 
 def empty():
+    """ Returns a Receipt without articles. """
     return Receipt(items=[], taxes_due=Decimal('0'), total_due=Decimal('0'))
 
 
-def insert_item(to_insert: ItemToInsert, receipt: Receipt) -> Receipt:
-    new_receipt_item = ReceiptItem(
-        description=to_insert.description,
-        quantity=to_insert.quantity,
-        subtotal_price_with_taxes=tax.apply(
-            to_insert.unit_price_before_taxes,
-            to_insert.taxes_to_apply,
-        ),
-    )
+def add_to_receipt(to_add: ItemToInsert, receipt: Receipt) -> Receipt:
+    """ Returns a copy to :param receipt: with :param to_add: added to it. """
+    quantity = to_add.quantity
+    taxes_to_apply = to_add.taxes_to_apply
 
-    item_taxes_due = new_receipt_item.subtotal_price_with_taxes - to_insert.unit_price_before_taxes
+    unit_price_before_taxes = to_add.unit_price_before_taxes
+    unit_price_with_taxes = tax.apply(unit_price_before_taxes, taxes_to_apply)
+    unit_taxes_due = unit_price_with_taxes - unit_price_before_taxes
+
+    subtotal_with_taxes = quantity * unit_price_with_taxes
+    subtoal_taxes_due = quantity * unit_taxes_due
 
     return Receipt(
-        items=[*receipt.items, new_receipt_item],
-        taxes_due=receipt.taxes_due + item_taxes_due,
-        total_due=receipt.total_due + new_receipt_item.subtotal_price_with_taxes,
-    )
-
-
-def finalize(items_to_insert: List[ItemToInsert]) -> Receipt:
-    return reduce(
-        lambda receipt, to_insert: insert_item(to_insert, receipt),
-        items_to_insert,
-        empty(),
+        items=[
+            *deepcopy(receipt.items),
+            ReceiptItem(
+                description=to_add.description,
+                quantity=quantity,
+                subtotal_price_with_taxes=subtotal_with_taxes,
+            )
+        ],
+        taxes_due=receipt.taxes_due + subtoal_taxes_due,
+        total_due=receipt.total_due + subtotal_with_taxes,
     )

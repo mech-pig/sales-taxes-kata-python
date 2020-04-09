@@ -1,3 +1,4 @@
+from dataclasses import dataclass
 from decimal import Decimal
 
 import pytest
@@ -14,22 +15,43 @@ def test_empty_returns_receipt_without_items():
     assert expected == receipt.empty()
 
 
-@pytest.mark.parametrize('input_receipt, printed_receipt', [
-    pytest.param(
-        [],
-        receipt.empty(),
-        id='empty receipt',
+@dataclass
+class AddToReceiptTestCase:
+    to_add: receipt.ItemToInsert
+    initial: receipt.Receipt
+    expected: receipt.Receipt
+
+
+ADD_TO_RECEIPT_TEST_CASES = {
+    'empty receipt, quantity = 1, no taxes': AddToReceiptTestCase(
+        initial=receipt.empty(),
+        to_add=receipt.ItemToInsert(
+            description='a test item',
+            quantity=1,
+            unit_price_before_taxes=Decimal('1'),
+            taxes_to_apply=[]
+        ),
+        expected=receipt.Receipt(
+            items=[
+                receipt.ReceiptItem(
+                    description='a test item',
+                    quantity=1,
+                    subtotal_price_with_taxes=Decimal('1'),
+                )
+            ],
+            taxes_due=Decimal('0'),
+            total_due=Decimal('1'),
+        )
     ),
-    pytest.param(
-        [
-            receipt.ItemToInsert(
-                description='a test item',
-                quantity=1,
-                unit_price_before_taxes=Decimal('1'),
-                taxes_to_apply=[tax.Tax(rate=Decimal('0.1'), id='10%')]
-            ),
-        ],
-        receipt.Receipt(
+    'empty receipt, quantity = 1, single tax': AddToReceiptTestCase(
+        initial=receipt.empty(),
+        to_add=receipt.ItemToInsert(
+            description='a test item',
+            quantity=1,
+            unit_price_before_taxes=Decimal('1'),
+            taxes_to_apply=[tax.Tax(rate=Decimal('0.1'), id='10%')]
+        ),
+        expected=receipt.Receipt(
             items=[
                 receipt.ReceiptItem(
                     description='a test item',
@@ -39,120 +61,114 @@ def test_empty_returns_receipt_without_items():
             ],
             taxes_due=Decimal('0.1'),
             total_due=Decimal('1.1'),
-        ),
-        id='single item with single tax',
+        )
     ),
-    pytest.param(
-        [
-            receipt.ItemToInsert(
-                description='a test item',
-                quantity=1,
-                unit_price_before_taxes=Decimal('1.04'),
-                taxes_to_apply=[tax.Tax(rate=Decimal('0.1'), id='10%')]
-            ),
-        ],
-        receipt.Receipt(
+    'empty receipt, quantity > 1, no taxes': AddToReceiptTestCase(
+        initial=receipt.empty(),
+        to_add=receipt.ItemToInsert(
+            description='a test item',
+            quantity=3,
+            unit_price_before_taxes=Decimal('1'),
+            taxes_to_apply=[]
+        ),
+        expected=receipt.Receipt(
             items=[
                 receipt.ReceiptItem(
                     description='a test item',
-                    quantity=1,
-                    subtotal_price_with_taxes=Decimal('1.14'),
+                    quantity=3,
+                    subtotal_price_with_taxes=Decimal('3'),
                 )
             ],
-            taxes_due=Decimal('0.10'),
-            total_due=Decimal('1.14'),
-        ),
-        id='single item with single tax (tax amount rounded down)',
+            taxes_due=Decimal('0'),
+            total_due=Decimal('3'),
+        )
     ),
-    pytest.param(
-        [
-            receipt.ItemToInsert(
-                description='a test item',
-                quantity=1,
-                unit_price_before_taxes=Decimal('1.48'),
-                taxes_to_apply=[tax.Tax(rate=Decimal('0.1'), id='10%')]
-            ),
-        ],
-        receipt.Receipt(
+    'empty receipt, quantity > 1, single tax': AddToReceiptTestCase(
+        initial=receipt.empty(),
+        to_add=receipt.ItemToInsert(
+            description='a test item',
+            quantity=3,
+            unit_price_before_taxes=Decimal('1'),
+            taxes_to_apply=[tax.Tax(rate=Decimal('0.1'), id='10%')]
+        ),
+        expected=receipt.Receipt(
             items=[
                 receipt.ReceiptItem(
                     description='a test item',
-                    quantity=1,
-                    subtotal_price_with_taxes=Decimal('1.63'),
-                )
-            ],
-            taxes_due=Decimal('0.15'),
-            total_due=Decimal('1.63'),
-        ),
-        id='single item with single tax (tax amount rounded up)',
-    ),
-    pytest.param(
-        [
-            receipt.ItemToInsert(
-                description='a test item',
-                quantity=1,
-                unit_price_before_taxes=Decimal('1'),
-                taxes_to_apply=[
-                    tax.Tax(rate=Decimal('0.1'), id='10%'),
-                    tax.Tax(rate=Decimal('0.2'), id='20%')
-                ]
-            ),
-        ],
-        receipt.Receipt(
-            items=[
-                receipt.ReceiptItem(
-                    description='a test item',
-                    quantity=1,
-                    subtotal_price_with_taxes=Decimal('1.3'),
+                    quantity=3,
+                    subtotal_price_with_taxes=Decimal('3.3'),
                 )
             ],
             taxes_due=Decimal('0.3'),
-            total_due=Decimal('1.3'),
-        ),
-        id='single item with multiple taxes',
+            total_due=Decimal('3.3'),
+        )
     ),
-    pytest.param(
-        [
-            receipt.ItemToInsert(
-                description='a test item',
-                quantity=1,
-                unit_price_before_taxes=Decimal('1'),
-                taxes_to_apply=[
-                    tax.Tax(rate=Decimal('0.1'), id='10%'),
-                    tax.Tax(rate=Decimal('0.2'), id='20%'),
-                ]
-            ),
-            receipt.ItemToInsert(
-                description='a second test item',
-                quantity=1,
-                unit_price_before_taxes=Decimal('2'),
-                taxes_to_apply=[
-                    tax.Tax(rate=Decimal('0.3'), id='30%'),
-                    tax.Tax(rate=Decimal('0.05'), id='5%'),
-                ]
-            ),
-        ],
-        receipt.Receipt(
+    'empty receipt, quantity > 1, multiple taxes': AddToReceiptTestCase(
+        initial=receipt.empty(),
+        to_add=receipt.ItemToInsert(
+            description='a test item',
+            quantity=2,
+            unit_price_before_taxes=Decimal('1'),
+            taxes_to_apply=[
+                tax.Tax(rate=Decimal('0.1'), id='10%'),
+                tax.Tax(rate=Decimal('0.05'), id='5%'),
+            ]
+        ),
+        expected=receipt.Receipt(
             items=[
                 receipt.ReceiptItem(
                     description='a test item',
-                    quantity=1,
-                    subtotal_price_with_taxes=Decimal('1.3'),
-                ),
-                receipt.ReceiptItem(
-                    description='a second test item',
-                    quantity=1,
-                    subtotal_price_with_taxes=Decimal('2.7'),
+                    quantity=2,
+                    subtotal_price_with_taxes=Decimal('2.30'),
                 )
             ],
-            taxes_due=Decimal('1'),
-            total_due=Decimal('4'),
-        ),
-        id='multiple items with multiple taxes',
+            taxes_due=Decimal('0.3'),
+            total_due=Decimal('2.30'),
+        )
     ),
+    'receipt with items, quantity > 1, multiple taxes': AddToReceiptTestCase(
+        initial=receipt.Receipt(
+            items=[
+                receipt.ReceiptItem(
+                    description='a test item',
+                    quantity=2,
+                    subtotal_price_with_taxes=Decimal('2.30'),
+                )
+            ],
+            taxes_due=Decimal('0.3'),
+            total_due=Decimal('2.30'),
+        ),
+        to_add=receipt.ItemToInsert(
+            description='a test item 2',
+            quantity=3,
+            unit_price_before_taxes=Decimal('2'),
+            taxes_to_apply=[
+                tax.Tax(rate=Decimal('0.2'), id='20%'),
+                tax.Tax(rate=Decimal('0.1'), id='10%'),
+                tax.Tax(rate=Decimal('0.05'), id='5%'),
+            ]
+        ),
+        expected=receipt.Receipt(
+            items=[
+                receipt.ReceiptItem(
+                    description='a test item',
+                    quantity=2,
+                    subtotal_price_with_taxes=Decimal('2.30'),
+                ),
+                receipt.ReceiptItem(
+                    description='a test item 2',
+                    quantity=3,
+                    subtotal_price_with_taxes=3 * (Decimal('2') + Decimal('0.4') + Decimal('0.2') + Decimal('0.1')),
+                )
+            ],
+            taxes_due=Decimal('0.3') + 3 * (Decimal('0.4') + Decimal('0.2') + Decimal('0.1')),
+            total_due=Decimal('2.30') + 3 * (Decimal('2') + Decimal('0.4') + Decimal('0.2') + Decimal('0.1')),
+        )
+    )
+}
+
+@pytest.mark.parametrize('case', [
+    pytest.param(case, id=id) for id, case in ADD_TO_RECEIPT_TEST_CASES.items()
 ])
-def test_finalize_returns_finalized_receipt_with_taxes_applied(
-    input_receipt,
-    printed_receipt,
-):
-    assert printed_receipt == receipt.finalize(input_receipt)
+def test_add_to_receipt_returns_receipt_with_added_item(case):
+    assert case.expected == receipt.add_to_receipt(to_add=case.to_add, receipt=case.initial)
