@@ -3,7 +3,7 @@ from unittest.mock import Mock, sentinel
 import pytest
 
 from taxes.services import tax
-from test.services.tax.use_cases.test_add_taxes import add_taxes_test_cases
+from tax.use_cases.test_add_taxes import add_taxes_test_cases
 
 
 @pytest.fixture

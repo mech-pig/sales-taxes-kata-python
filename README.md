@@ -4,6 +4,7 @@ The classic sales taxes kata, in python.
 
 - [Installation](#installation)
   - [Local](#local)
+- [Usage](#usage)
 - [The Kata](#the-kata)
   - [Examples](#examples)
   - [Goal](#goal)
@@ -36,6 +37,30 @@ receipt -h
 Deactivate the environment with:
 ```sh
 deactivate
+```
+
+## Usage
+
+Given a `basket.txt` file:
+
+```
+1 book at 12.49
+1 music CD at 14.99
+1 chocolate bar at 0.85
+```
+
+run the command specifying the input file
+```sh
+receipt -i basket.txt
+```
+
+and the receipt will be printed on stdout
+```
+1 book: 12.49
+1 music cd: 14.99
+1 chocolate bar: 0.85
+Sales Taxes: 0.00
+Total: 28.33
 ```
 
 ## The Kata
