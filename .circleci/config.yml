@@ -1,0 +1,45 @@
+version: 2.1
+commands:
+  with-poetry:
+    description: "Execute steps in a cached, poetry-powered environment"
+    parameters:
+      cache-dir:
+        description: "The path to the cache directory used by poetry."
+        type: string
+        default: ".poetry-cache"
+      exec-steps:
+        description: "Steps to be executed"
+        type: steps
+        default: []
+    steps:
+      - run:
+          name: Configure poetry
+          command: |
+            poetry config virtualenvs.in-project true
+            poetry config virtualenvs.create true
+            poetry config cache-dir << parameters.cache-dir >>
+      - restore_cache:
+          key: python-{{ .Branch }}-{{ checksum "poetry.lock" }}
+      - run:
+          name: Install CI dependencies
+          command: make install-ci
+      - steps: << parameters.exec-steps >>
+      - save_cache:
+          paths:
+            - << parameters.cache-dir >>
+          key: python-{{ .Branch }}-{{ checksum "poetry.lock" }}
+
+workflows:
+  static-analysis:
+    jobs:
+      - dummy
+
+jobs:
+  dummy:
+    docker:
+      - image: circleci/python:3.8
+        environment:
+          POETRY_VERSION: 1
+    steps:
+      - checkout
+      - with-poetry
