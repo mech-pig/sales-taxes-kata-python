@@ -33,6 +33,12 @@ workflows:
   static-analysis:
     jobs:
       - lint
+  test:
+    jobs:
+      - test-unit
+  qa:
+    jobs:
+      - test-e2e
 
 jobs:
   lint:
@@ -47,3 +53,29 @@ jobs:
             - run:
                 name: Lint source code
                 command: make lint
+  test-unit:
+    docker:
+      - image: circleci/python:3.8
+        environment:
+          POETRY_VERSION: 1
+    steps:
+      - checkout
+      - with-poetry:
+          exec-steps:
+            - run:
+                name: Run unit tests
+                command: make test-unit PYTEST_ADDITIONAL_ARGS="--junitxml=test-results/pytest/unit.xml"
+            - store_test_results:
+                path: test-results
+  test-e2e:
+    docker:
+      - image: circleci/python:3.8
+        environment:
+          POETRY_VERSION: 1
+    steps:
+      - checkout
+      - with-poetry:
+          exec-steps:
+            - run:
+                name: Run end-to-end tests
+                command: make test-e2e
