@@ -12,8 +12,16 @@ PYTEST_WATCH_ARGS = -vv
 PYTEST_TEST_ARGS = $(PYTEST_WATCH_ARGS) --maxfail=2 -rf -vv --strict --cov src --cov-branch
 PYTEST_ADDITIONAL_ARGS := ''
 
+.PHONY: install
+install: install-clean  ## install the app
+
+.PHONY: install-clean
+install-clean:
+	[ -f "poetry.lock" ] && rm "poetry.lock"
+	poetry install --no-dev
+
 .PHONY: install-ci
-install-ci:
+install-ci: ## install base and ci dependencies
 	poetry install $(POETRY_INSTALL_EXTRAS) --no-dev
 
 .PHONY: install-dev
