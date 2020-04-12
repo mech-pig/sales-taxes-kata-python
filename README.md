@@ -1,4 +1,44 @@
 # Sales taxes kata
+
+The classic sales taxes kata, in python.
+
+- [Installation](#installation)
+  - [Local](#local)
+- [The Kata](#the-kata)
+  - [Examples](#examples)
+  - [Goal](#goal)
+  - [Requirements](#requirements)
+
+## Installation
+
+### Local
+#### Requirements
+- Python 3.8.X (you can install it from the [official site](https://www.python.org/downloads/) or you can use your OS's package manager; you can also install it via [pyenv](https://github.com/pyenv/pyenv) to easily switch between multiple versions of Python installed on your system)
+- [poetry 1.0.X](https://python-poetry.org/)
+
+#### Install
+Install the `receipt` command in a dedicated virtual environment:
+```sh
+make install
+```
+
+#### Run
+Spawn a shell within the virtual environment:
+```sh
+poetry shell
+```
+
+The `receipt` command is available:
+```sh
+receipt -h
+```
+
+Deactivate the environment with:
+```sh
+deactivate
+```
+
+## The Kata
 On each purchase governments impose sales taxes that depend on many
 criteria like:
 - article category
@@ -6,7 +46,7 @@ criteria like:
 is sold)
 - shipping destination
 
-## Overview
+### Overview
 Basic sales tax is applicable at a rate of `10%` on all articles
 except the ones belonging to categories that are exempt:
 - book
@@ -23,15 +63,15 @@ Customers making a purchase receive a receipt containing:
 - sales taxes due
 - total to be paid (including taxes)
 
-### Examples
-#### Purchase 1
-##### Basket
+#### Examples
+##### Purchase 1
+###### Basket
 ```
 1 book at 12.49
 1 music CD at 14.99
 1 chocolate bar at 0.85
 ```
-##### Receipt
+###### Receipt
 ```
 1 book: 12.49
 1 music CD: 16.49
@@ -39,29 +79,28 @@ Customers making a purchase receive a receipt containing:
 Sales Taxes: 1.50
 Total: 29.83
 ```
-#### Purchase 2
-##### Basket
+##### Purchase 2
+###### Basket
 ```
 1 imported box of chocolates at 10.00
 1 imported bottle of perfume at 47.50
 ```
-##### Receipt
+###### Receipt
 ```
 1 imported box of chocolates: 10.50
-
 1 imported bottle of perfume: 54.65
 Sales Taxes: 7.65
 Total: 65.15
 ```
-#### Purchase 3
-##### Basket
+##### Purchase 3
+###### Basket
 ```
 1 imported bottle of perfume at 27.99
 1 bottle of perfume at 18.99
 1 packet of headache pills at 9.75
 1 box of imported chocolates at 11.25
 ```
-##### Receipt
+###### Receipt
 ```
 1 imported bottle of perfume: 32.19
 1 bottle of perfume: 20.89
@@ -71,7 +110,7 @@ Sales Taxes: 6.70
 Total: 74.68
 ```
 
-## Goal
+### Goal
 Design and implement a solution that prints the receipt for a purchase
 and demonstrate your problem solving approach and coding style and
 skills with a focus on:
@@ -80,7 +119,7 @@ skills with a focus on:
 - readability
 - testability
 
-## Requirements
+### Requirements
 - Use a programming language of your choice
 - Use a build automation tool
 - Keep it simple: do not use third-party libraries apart for unit
