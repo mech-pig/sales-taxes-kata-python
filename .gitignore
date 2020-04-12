@@ -196,6 +196,3 @@ $RECYCLE.BIN/
 *.lnk
 
 # End of https://www.gitignore.io/api/linux,macos,python,windows,virtualenv
-
-# poetry
-poetry.lock
