@@ -32,14 +32,18 @@ commands:
 workflows:
   static-analysis:
     jobs:
-      - dummy
+      - lint
 
 jobs:
-  dummy:
+  lint:
     docker:
       - image: circleci/python:3.8
         environment:
           POETRY_VERSION: 1
     steps:
       - checkout
-      - with-poetry
+      - with-poetry:
+          exec-steps:
+            - run:
+                name: Lint source code
+                command: make lint
