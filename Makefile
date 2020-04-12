@@ -10,6 +10,7 @@ help: ## show this help
 POETRY_INSTALL_EXTRAS = --extras "lint" --extras "test-unit" --extras "test-e2e"
 PYTEST_WATCH_ARGS = -vv
 PYTEST_TEST_ARGS = $(PYTEST_WATCH_ARGS) --maxfail=2 -rf -vv --strict --cov src --cov-branch
+PYTEST_ADDITIONAL_ARGS := ''
 
 .PHONY: install-ci
 install-ci:
@@ -25,7 +26,7 @@ lint: ## lint code
 
 .PHONY: tdd
 tdd: ## start a TDD session (re-run test on saves)
-	poetry run ptw -- $(PYTEST_WATCH_ARGS)
+	poetry run ptw -- $(PYTEST_WATCH_ARGS) $(PYTEST_ADDITIONAL_ARGS)
 
 .PHONY: test
 test: test-unit test-e2e  ## run all tests
@@ -36,7 +37,7 @@ test-e2e: test-e2e  ## run end-to-end tests
 
 .PHONY: test-unit
 test-unit: ## run unit tests
-	poetry run pytest $(PYTEST_TEST_ARGS)
+	poetry run pytest $(PYTEST_TEST_ARGS) $(PYTEST_ADDITIONAL_ARGS)
 
 
 # Release
