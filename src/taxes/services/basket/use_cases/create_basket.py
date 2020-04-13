@@ -26,7 +26,7 @@ class CreateBasketUseCase:
             article = create_article(
                 quantity=item.quantity,
                 product_name=item.product_name,
-                product_unit_price=item.unit_price,
+                unit_price_before_taxes=item.unit_price,
                 imported=item.imported,
             )
             env.info(f'adding {article} to {basket}')

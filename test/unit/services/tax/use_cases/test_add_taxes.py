@@ -22,7 +22,7 @@ TEST_CASES = {
     ),
     'single, non-imported article': AddTaxesTestCase(
         articles=[
-            article.create(quantity=2, product_name='test', product_unit_price=Decimal('1'), imported=False),
+            article.create(quantity=2, product_name='test', unit_price_before_taxes=Decimal('1'), imported=False),
         ],
         expected=[
             receipt.ItemToInsert(
@@ -35,7 +35,7 @@ TEST_CASES = {
     ),
     'single, imported article': AddTaxesTestCase(
         articles=[
-            article.create(quantity=2, product_name='test', product_unit_price=Decimal('1'), imported=True),
+            article.create(quantity=2, product_name='test', unit_price_before_taxes=Decimal('1'), imported=True),
         ],
         expected=[
             receipt.ItemToInsert(
@@ -48,8 +48,8 @@ TEST_CASES = {
     ),
     'multiple articles': AddTaxesTestCase(
         articles=[
-            article.create(quantity=2, product_name='test', product_unit_price=Decimal('1'), imported=False),
-            article.create(quantity=3, product_name='test-2', product_unit_price=Decimal('2.34'), imported=True),
+            article.create(quantity=2, product_name='test', unit_price_before_taxes=Decimal('1'), imported=False),
+            article.create(quantity=3, product_name='test-2', unit_price_before_taxes=Decimal('2.34'), imported=True),
         ],
         expected=[
             receipt.ItemToInsert(

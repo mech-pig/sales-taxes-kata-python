@@ -20,7 +20,7 @@ class TaxService:
             ItemToInsert(
                 description=describe(article),
                 quantity=article.quantity,
-                unit_price_before_taxes=article.product.unit_price,
+                unit_price_before_taxes=article.unit_price_before_taxes,
                 taxes_to_apply=[],
             ) for article in articles
         ]

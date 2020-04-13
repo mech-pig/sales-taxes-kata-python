@@ -11,7 +11,7 @@ def make_article_kwargs():
         return {
             'quantity': 12,
             'product_name': 'a-cool-product',
-            'product_unit_price': Decimal('12.23'),
+            'unit_price_before_taxes': Decimal('12.23'),
             'imported': False,
             **overrides,
         }
@@ -23,8 +23,8 @@ def test_create_returns_article(make_article_kwargs):
     expected = article.Article(
         product=product.Product(
             name=kwargs['product_name'],
-            unit_price=kwargs['product_unit_price'],
         ),
+        unit_price_before_taxes=kwargs['unit_price_before_taxes'],
         quantity=kwargs['quantity'],
         imported=kwargs['imported'],
     )
@@ -41,3 +41,19 @@ def test_article_quantity_cannot_be_non_positive(make_article_kwargs, quantity):
     error_msg = f'quantity must be positive: {quantity}'
     with pytest.raises(error_cls, match=error_msg):
         article.create(**kwargs)
+
+
+def test_article_unit_price_before_taxes_cant_be_negative(make_article_kwargs):
+    unit_price_before_taxes = Decimal('-1')
+    expected_error_cls = article.ArticleError.NegativeUnitPrice
+    expected_error_msg = f'unit_price_before_taxes can\'t be negative: {unit_price_before_taxes}'
+    with pytest.raises(expected_error_cls, match=expected_error_msg):
+        article.create(**make_article_kwargs(unit_price_before_taxes=unit_price_before_taxes))
+
+
+def test_article_unit_price_before_taxes_can_be_zero(make_article_kwargs):
+    unit_price_before_taxes = Decimal('0')
+    created = article.create(
+        **make_article_kwargs(unit_price_before_taxes=unit_price_before_taxes),
+    )
+    assert unit_price_before_taxes == created.unit_price_before_taxes

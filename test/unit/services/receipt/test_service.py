@@ -33,7 +33,7 @@ def test_create_receipt_returns_receipt(case, make_dependencies_fixture):
         ItemToInsert(
             description=i.article.product.name,
             quantity=i.article.quantity,
-            unit_price_before_taxes=i.article.product.unit_price,
+            unit_price_before_taxes=i.article.unit_price_before_taxes,
             taxes_to_apply=i.taxes_to_apply,
         ) for i in case.input
     ]

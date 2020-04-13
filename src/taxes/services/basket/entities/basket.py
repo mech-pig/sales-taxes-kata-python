@@ -25,7 +25,7 @@ class BasketEntryKey:
 def create_key(article: Article) -> BasketEntryKey:
     return BasketEntryKey(
         product_name=article.product.name,
-        unit_price=article.product.unit_price,
+        unit_price=article.unit_price_before_taxes,
         imported=article.imported,
     )
 
@@ -50,7 +50,7 @@ def add_article(article: Article, basket: Basket) -> Basket:
     key = create_key(article)
     updated_article = create_article(
         product_name=key.product_name,
-        product_unit_price=key.unit_price,
+        unit_price_before_taxes=key.unit_price,
         quantity=get_quantity(key, basket) + article.quantity,
         imported=key.imported
     )
@@ -63,7 +63,7 @@ def list_articles(basket: Basket) -> Iterable[Article]:
     return [
         create_article(
             product_name=article.product.name,
-            product_unit_price=article.product.unit_price,
+            unit_price_before_taxes=article.unit_price_before_taxes,
             imported=article.imported,
             quantity=article.quantity,
         ) for article in basket.articles.values()

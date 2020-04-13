@@ -32,7 +32,7 @@ TEST_CASES = {
                 article=article.create(
                     quantity=1,
                     product_name='test-product',
-                    product_unit_price=Decimal('1'),
+                    unit_price_before_taxes=Decimal('1'),
                     imported=False,
                 ),
                 taxes_to_apply=[],
@@ -56,7 +56,7 @@ TEST_CASES = {
                 article=article.create(
                     quantity=3,
                     product_name='test-product',
-                    product_unit_price=Decimal('1'),
+                    unit_price_before_taxes=Decimal('1'),
                     imported=False,
                 ),
                 taxes_to_apply=[],
@@ -80,7 +80,7 @@ TEST_CASES = {
                 article=article.create(
                     quantity=1,
                     product_name='test-product',
-                    product_unit_price=Decimal('2'),
+                    unit_price_before_taxes=Decimal('2'),
                     imported=False,
                 ),
                 taxes_to_apply=[tax.Tax(id='test-tax', rate=Decimal('0.1'))],
@@ -104,7 +104,7 @@ TEST_CASES = {
                 article=article.create(
                     quantity=1,
                     product_name='test-product',
-                    product_unit_price=Decimal('2'),
+                    unit_price_before_taxes=Decimal('2'),
                     imported=False,
                 ),
                 taxes_to_apply=[tax.Tax(id='test-tax', rate=Decimal('0.1'))],
@@ -113,7 +113,7 @@ TEST_CASES = {
                 article=article.create(
                     quantity=1,
                     product_name='test-product-2',
-                    product_unit_price=Decimal('1'),
+                    unit_price_before_taxes=Decimal('1'),
                     imported=True,
                 ),
                 taxes_to_apply=[tax.Tax(id='test-tax', rate=Decimal('0.1'))],
@@ -142,7 +142,7 @@ TEST_CASES = {
                 article=article.create(
                     quantity=1,
                     product_name='test-product',
-                    product_unit_price=Decimal('2'),
+                    unit_price_before_taxes=Decimal('2'),
                     imported=False,
                 ),
                 taxes_to_apply=[
@@ -154,7 +154,7 @@ TEST_CASES = {
                 article=article.create(
                     quantity=1,
                     product_name='test-product-2',
-                    product_unit_price=Decimal('1'),
+                    unit_price_before_taxes=Decimal('1'),
                     imported=True,
                 ),
                 taxes_to_apply=[
@@ -203,7 +203,7 @@ def make_add_taxes_fixture():
             receipt.ItemToInsert(
                 description=i.article.product.name,
                 quantity=i.article.quantity,
-                unit_price_before_taxes=i.article.product.unit_price,
+                unit_price_before_taxes=i.article.unit_price_before_taxes,
                 taxes_to_apply=i.taxes_to_apply,
             ) for i in input
         ])
