@@ -12,6 +12,7 @@ def make_article_kwargs():
             'quantity': 12,
             'product_name': 'a-cool-product',
             'product_unit_price': Decimal('12.23'),
+            'imported': False,
             **overrides,
         }
     return build
@@ -25,6 +26,7 @@ def test_create_returns_article(make_article_kwargs):
             unit_price=kwargs['product_unit_price'],
         ),
         quantity=kwargs['quantity'],
+        imported=kwargs['imported'],
     )
     assert expected == article.create(**kwargs)
 

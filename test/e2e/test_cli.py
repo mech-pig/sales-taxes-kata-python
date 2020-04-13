@@ -119,6 +119,20 @@ TEST_CASES = {
             Total: 104.00
         """
     ),
+    'multiple tax-free, imported articles': CliTestCase(
+        input="""
+            5 imported book at 12.49
+            3 imported chocolate bar at 0.85
+            4 imported packet of headache pills at 9.75
+        """,
+        expected="""
+            5 imported book: 62.45
+            3 imported chocolate bar: 2.55
+            4 imported packet of headache pills: 39.00
+            Sales Taxes: 0.00
+            Total: 104.00
+        """
+    ),
 
 }
 

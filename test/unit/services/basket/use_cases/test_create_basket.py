@@ -26,7 +26,7 @@ TEST_CASES = {
             PurchasedItem(product_name='A', unit_price=Decimal('1'), quantity=1, imported=False),
         ],
         expected=[
-            article.create(product_name='A', product_unit_price=Decimal('1'), quantity=1),
+            article.create(product_name='A', product_unit_price=Decimal('1'), quantity=1, imported=False),
         ],
     ),
     'multiple products': CreateBasketTestCase(
@@ -36,9 +36,9 @@ TEST_CASES = {
             PurchasedItem(product_name='C', unit_price=Decimal('1'), quantity=5, imported=False),
         ],
         expected=[
-            article.create(product_name='B', product_unit_price=Decimal('1'), quantity=2),
-            article.create(product_name='A', product_unit_price=Decimal('1'), quantity=3),
-            article.create(product_name='C', product_unit_price=Decimal('1'), quantity=5),
+            article.create(product_name='B', product_unit_price=Decimal('1'), quantity=2, imported=False),
+            article.create(product_name='A', product_unit_price=Decimal('1'), quantity=3, imported=False),
+            article.create(product_name='C', product_unit_price=Decimal('1'), quantity=5, imported=False),
         ],
     ),
     'same product added multiple times': CreateBasketTestCase(
@@ -50,8 +50,8 @@ TEST_CASES = {
             PurchasedItem(product_name='A', unit_price=Decimal('1'), quantity=2, imported=False),
         ],
         expected=[
-            article.create(product_name='B', product_unit_price=Decimal('1'), quantity=9),
-            article.create(product_name='A', product_unit_price=Decimal('1'), quantity=3),
+            article.create(product_name='B', product_unit_price=Decimal('1'), quantity=9, imported=False),
+            article.create(product_name='A', product_unit_price=Decimal('1'), quantity=3, imported=False),
         ],
     ),
     'same product name, but different unit prices': CreateBasketTestCase(
@@ -60,8 +60,8 @@ TEST_CASES = {
             PurchasedItem(product_name='A', unit_price=Decimal('1.1'), quantity=3, imported=False),
         ],
         expected=[
-            article.create(product_name='A', product_unit_price=Decimal('1'), quantity=2),
-            article.create(product_name='A', product_unit_price=Decimal('1.1'), quantity=3),
+            article.create(product_name='A', product_unit_price=Decimal('1'), quantity=2, imported=False),
+            article.create(product_name='A', product_unit_price=Decimal('1.1'), quantity=3, imported=False),
         ],
     ),
 }

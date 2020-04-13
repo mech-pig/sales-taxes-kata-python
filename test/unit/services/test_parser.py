@@ -20,6 +20,7 @@ from taxes.services.basket.entities.purchased_item import PurchasedItem
     pytest.param('1 1-t_e.m! at 12.39', 1, '1-t_e.m!', Decimal('12.39'), False, id='product name: ascii string with symbols'),
     pytest.param('1 👍👍👍 at 12.39', 1, '👍👍👍', Decimal('12.39'), False, id='product name: unicode word'),
     pytest.param('1 this is an item at 12.39', 1, 'this is an item', Decimal('12.39'), False, id='product name: ascii string with spaces'),
+    pytest.param('1 imported item with a log description! at 1.00', 1, 'item with a log description!', Decimal('1'), True, id='imported item'),
 
     # unit price
     pytest.param('1 item at 0', 1, 'item', Decimal('0'), False, id='unit price: zero with no decimal part'),
