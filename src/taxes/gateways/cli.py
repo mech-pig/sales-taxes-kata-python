@@ -3,8 +3,8 @@ import logging
 
 from taxes.adapters import stdio
 from taxes.adapters.basket_service import BasketServiceAdapter
-from taxes.services.basket import create as create_basket_service
-from taxes.services.receipt import create as create_receipt_service
+from taxes.services.basket.service import create as create_basket_service
+from taxes.services.receipt.service import create as create_receipt_service
 from taxes.services.tax import create as create_tax_service
 
 

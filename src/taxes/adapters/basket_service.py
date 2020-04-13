@@ -1,9 +1,11 @@
 from dataclasses import dataclass
 from typing import Iterable
 
-from taxes.services.basket import BasketService
+from taxes.services.basket.service import BasketService
 from taxes.services.basket.entities import article
-from taxes.services.receipt import Dependency as ReceiptServiceDependency
+from taxes.services.receipt.service import (
+    Dependency as ReceiptServiceDependency
+)
 
 
 @dataclass
