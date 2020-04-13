@@ -11,9 +11,14 @@ class TaxService:
 
     def add_taxes(self, articles: Iterable[Article]) -> Iterable[ItemToInsert]:
         self.logger.info('wip: no taxes will be added')
+
+        def describe(article):
+            imported = 'imported ' if article.imported else ''
+            return f'{imported}{article.product.name}'
+
         return [
             ItemToInsert(
-                description=article.product.name,
+                description=describe(article),
                 quantity=article.quantity,
                 unit_price_before_taxes=article.product.unit_price,
                 taxes_to_apply=[],

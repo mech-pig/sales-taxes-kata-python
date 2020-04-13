@@ -11,8 +11,9 @@ Quantity = NewType('Quantity', int)
 
 @dataclass(frozen=True)
 class Article:
-    quantity: Quantity
     product: product.Product
+    imported: bool
+    quantity: Quantity
 
 
 class ArticleError:
@@ -21,7 +22,12 @@ class ArticleError:
             super().__init__(f'quantity must be positive: {value}')
 
 
-def create(quantity: int, product_name: str, product_unit_price: Decimal):
+def create(
+    quantity: int,
+    imported: bool,
+    product_name: str,
+    product_unit_price: Decimal,
+):
     """ Creates an article.
 
     Article quantity must be greater than zero, unit_price can't be less than
@@ -35,5 +41,6 @@ def create(quantity: int, product_name: str, product_unit_price: Decimal):
             name=product_name,
             unit_price=product_unit_price,
         ),
+        imported=imported,
         quantity=quantity,
     )
