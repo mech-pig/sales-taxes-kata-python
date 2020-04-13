@@ -7,7 +7,7 @@ help: ## show this help
 
 # Development
 
-POETRY_INSTALL_EXTRAS = --extras "lint" --extras "test-unit" --extras "test-e2e"
+POETRY_INSTALL_EXTRAS = --extras "lint" --extras "test"
 PYTEST_WATCH_ARGS = -vv
 PYTEST_TEST_ARGS = $(PYTEST_WATCH_ARGS) --maxfail=2 -rf -vv --strict --cov src --cov-branch
 PYTEST_ADDITIONAL_ARGS :=
