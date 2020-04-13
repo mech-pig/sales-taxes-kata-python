@@ -1,7 +1,7 @@
 from dataclasses import dataclass
 from decimal import Decimal
 from typing import List
-from unittest.mock import call, Mock, sentinel
+from unittest.mock import call, Mock
 
 import pytest
 
@@ -12,24 +12,24 @@ from taxes.services.receipt.use_cases import create_receipt
 
 @dataclass
 class CreateReceiptTestCase:
-    params: List['TestCaseParams']
+    input: List['TestCaseInput']
     expected: receipt.Receipt
 
     @dataclass
-    class TestCaseParams:
-        article_in_basket: article.Article
+    class TestCaseInput:
+        article: article.Article
         taxes_to_apply: List[tax.Tax]
 
 
 TEST_CASES = {
     'no articles in basket': CreateReceiptTestCase(
-        params=[],
+        input=[],
         expected=receipt.empty()
     ),
     'single article in basket, with no taxes': CreateReceiptTestCase(
-        params=[
-            CreateReceiptTestCase.TestCaseParams(
-                article_in_basket=article.create(
+        input=[
+            CreateReceiptTestCase.TestCaseInput(
+                article=article.create(
                     quantity=1,
                     product_name='test-product',
                     product_unit_price=Decimal('1'),
@@ -50,9 +50,9 @@ TEST_CASES = {
         )
     ),
     'single article in basket (quantity > 1), with no taxes': CreateReceiptTestCase(
-        params=[
-            CreateReceiptTestCase.TestCaseParams(
-                article_in_basket=article.create(
+        input=[
+            CreateReceiptTestCase.TestCaseInput(
+                article=article.create(
                     quantity=3,
                     product_name='test-product',
                     product_unit_price=Decimal('1'),
@@ -73,9 +73,9 @@ TEST_CASES = {
         )
     ),
     'single article in basket, with single tax': CreateReceiptTestCase(
-        params=[
-            CreateReceiptTestCase.TestCaseParams(
-                article_in_basket=article.create(
+        input=[
+            CreateReceiptTestCase.TestCaseInput(
+                article=article.create(
                     quantity=1,
                     product_name='test-product',
                     product_unit_price=Decimal('2'),
@@ -96,17 +96,17 @@ TEST_CASES = {
         )
     ),
     'multiple articles in basket, single tax each': CreateReceiptTestCase(
-        params=[
-            CreateReceiptTestCase.TestCaseParams(
-                article_in_basket=article.create(
+        input=[
+            CreateReceiptTestCase.TestCaseInput(
+                article=article.create(
                     quantity=1,
                     product_name='test-product',
                     product_unit_price=Decimal('2'),
                 ),
                 taxes_to_apply=[tax.Tax(id='test-tax', rate=Decimal('0.1'))],
             ),
-            CreateReceiptTestCase.TestCaseParams(
-                article_in_basket=article.create(
+            CreateReceiptTestCase.TestCaseInput(
+                article=article.create(
                     quantity=1,
                     product_name='test-product-2',
                     product_unit_price=Decimal('1'),
@@ -132,9 +132,9 @@ TEST_CASES = {
         )
     ),
     'multiple articles in basket, multiple taxes each': CreateReceiptTestCase(
-        params=[
-            CreateReceiptTestCase.TestCaseParams(
-                article_in_basket=article.create(
+        input=[
+            CreateReceiptTestCase.TestCaseInput(
+                article=article.create(
                     quantity=1,
                     product_name='test-product',
                     product_unit_price=Decimal('2'),
@@ -144,8 +144,8 @@ TEST_CASES = {
                     tax.Tax(id='test-tax-2', rate=Decimal('0.1')),
                 ],
             ),
-            CreateReceiptTestCase.TestCaseParams(
-                article_in_basket=article.create(
+            CreateReceiptTestCase.TestCaseInput(
+                article=article.create(
                     quantity=1,
                     product_name='test-product-2',
                     product_unit_price=Decimal('1'),
@@ -190,32 +190,24 @@ def info():
 
 
 @pytest.fixture
-def make_create_basket_fixture():
-    def build(params: List[CreateReceiptTestCase.TestCaseParams]):
-        return Mock(return_value=[p.article_in_basket for p in params])
-    return build
-
-
-@pytest.fixture
 def make_add_taxes_fixture():
-    def build(params: List[CreateReceiptTestCase.TestCaseParams]):
+    def build(input: List[CreateReceiptTestCase.TestCaseInput]):
         return Mock(return_value=[
             receipt.ItemToInsert(
-                description=p.article_in_basket.product.name,
-                quantity=p.article_in_basket.quantity,
-                unit_price_before_taxes=p.article_in_basket.product.unit_price,
-                taxes_to_apply=p.taxes_to_apply,
-            ) for p in params
+                description=i.article.product.name,
+                quantity=i.article.quantity,
+                unit_price_before_taxes=i.article.product.unit_price,
+                taxes_to_apply=i.taxes_to_apply,
+            ) for i in input
         ])
     return build
 
 
 @pytest.fixture
-def make_env_fixture(info, make_add_taxes_fixture, make_create_basket_fixture):
+def make_env_fixture(info, make_add_taxes_fixture):
     def build(params, **overrides):
         return create_receipt.Environment(**{
             'info': info,
-            'create_basket': make_create_basket_fixture(params),
             'add_taxes': make_add_taxes_fixture(params),
             **overrides,
         })
@@ -224,29 +216,23 @@ def make_env_fixture(info, make_add_taxes_fixture, make_create_basket_fixture):
 
 @create_receipt_test_cases
 def test_create_returns_use_case(case):
-    articles_in_basket = [p.article_in_basket for p in case.params]
-    run = create_receipt.create(articles=sentinel.articles)
+    articles = [i.article for i in case.input]
+    run = create_receipt.create(articles=articles)
     assert isinstance(run, create_receipt.CreateReceiptUseCase)
 
 
 @create_receipt_test_cases
 def test_use_case_returns_receipt_from_articles(case, make_env_fixture):
-    run = create_receipt.create(articles=sentinel.articles)
-    env = make_env_fixture(case.params)
+    articles = [i.article for i in case.input]
+    run = create_receipt.create(articles=articles)
+    env = make_env_fixture(case.input)
     assert case.expected == run(env)
 
 
 @create_receipt_test_cases
-def test_use_case_calls_create_basket_with_input_articles(case, make_env_fixture):
-    run = create_receipt.create(articles=sentinel.articles)
-    env = make_env_fixture(case.params)
+def test_use_case_calls_add_taxes_with_articles(case, make_env_fixture):
+    articles = [i.article for i in case.input]
+    run = create_receipt.create(articles=articles)
+    env = make_env_fixture(case.input)
     run(env)
-    assert [call(sentinel.articles)] == env.create_basket.call_args_list
-
-
-@create_receipt_test_cases
-def test_use_case_calls_add_taxes_with_articles_from_basket(case, make_env_fixture):
-    run = create_receipt.create(articles=sentinel.articles)
-    env = make_env_fixture(case.params)
-    run(env)
-    assert [call(env.create_basket.return_value)] == env.add_taxes.call_args_list
+    assert [call(articles)] == env.add_taxes.call_args_list

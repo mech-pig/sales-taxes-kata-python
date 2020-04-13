@@ -11,12 +11,8 @@ class CreateReceiptUseCase:
     articles: Iterable[Article]
 
     def __call__(self, env: 'Environment') -> receipt.Receipt:
-        env.info('creating basket')
-        articles_in_basket = env.create_basket(self.articles)
-        env.info('basket created')
-
         env.info('adding taxes to articles in basket')
-        articles_with_taxes = env.add_taxes(articles_in_basket)
+        articles_with_taxes = env.add_taxes(self.articles)
         env.info('taxes added')
 
         def add_to_receipt(receipt_, to_add):
@@ -37,7 +33,6 @@ class CreateReceiptUseCase:
 @dataclass
 class Environment:
     info: Callable[[str], None]
-    create_basket: Callable[[Iterable[Article]], Iterable[Article]]
     add_taxes: Callable[[Iterable[Article]], Iterable[receipt.ItemToInsert]]
 
 
