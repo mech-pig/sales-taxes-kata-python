@@ -11,7 +11,7 @@ from taxes.services.basket.use_cases import (
 class BasketService:
     logger: 'Dependency.Logger'
 
-    def create_basket(self, articles: Iterable[Article]):
+    def create_basket(self, articles: Iterable[Article]) -> Iterable[Article]:
         run = create_basket_use_case.create(articles=articles)
         env = create_basket_use_case.Environment(info=self.logger.info)
         return run(env)

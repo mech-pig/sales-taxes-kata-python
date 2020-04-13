@@ -63,3 +63,26 @@ def test_add_article_doesnt_modify_quantity_of_different_products_already_in_bas
     article_to_add = article.Article(product=new_product, quantity=1)
     updated_basket = basket.add_article(article_to_add, initial_basket)
     assert product_in_basket_quantity == basket.get_quantity(product_in_basket, updated_basket)
+
+
+def test_list_articles_returns_empty_list_if_basket_is_emtpy():
+    empty_basket = basket.empty()
+    assert [] == basket.list_articles(empty_basket)
+
+
+def test_list_articles_returns_list_of_added_articles_sorted_by_insertion_order():
+    articles_to_add = [
+        article.create(quantity=1, product_name='B', product_unit_price=Decimal('1')),
+        article.create(quantity=1, product_name='A', product_unit_price=Decimal('1')),
+        article.create(quantity=1, product_name='B', product_unit_price=Decimal('1'))
+    ]
+    expected = [
+        article.create(quantity=2, product_name='B', product_unit_price=Decimal('1')),
+        article.create(quantity=1, product_name='A', product_unit_price=Decimal('1'))
+    ]
+
+    basket_with_articles = basket.empty()
+    for a in articles_to_add:
+        basket_with_articles = basket.add_article(a, basket_with_articles)
+
+    assert expected == basket.list_articles(basket_with_articles)

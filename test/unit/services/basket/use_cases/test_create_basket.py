@@ -11,65 +11,57 @@ from taxes.services.basket.use_cases import create_basket
 
 @dataclass
 class CreateBasketTestCase:
-    articles: List[article.Article]
-    expected: basket.Basket
+    input: List[article.Article]
+    expected: List[article.Article]
 
 
 TEST_CASES = {
     'empty article list': CreateBasketTestCase(
-        articles=[],
-        expected=basket.empty()
+        input=[],
+        expected=[]
     ),
     'list with single article': CreateBasketTestCase(
-        articles=[
+        input=[
             article.create(product_name='A', product_unit_price=Decimal('1'), quantity=1),
         ],
-        expected=basket.Basket(
-            articles={
-                product.create(name='A', unit_price=Decimal('1')): 1,
-            }
-        ),
+        expected=[
+            article.create(product_name='A', product_unit_price=Decimal('1'), quantity=1),
+        ],
     ),
     'multiple products': CreateBasketTestCase(
-        articles=[
+        input=[
             article.create(product_name='B', product_unit_price=Decimal('1'), quantity=2),
             article.create(product_name='A', product_unit_price=Decimal('1'), quantity=3),
             article.create(product_name='C', product_unit_price=Decimal('1'), quantity=5),
         ],
-        expected=basket.Basket(
-            articles={
-                product.create(name='A', unit_price=Decimal('1')): 3,
-                product.create(name='B', unit_price=Decimal('1')): 2,
-                product.create(name='C', unit_price=Decimal('1')): 5,
-            }
-        ),
+        expected=[
+            article.create(product_name='B', product_unit_price=Decimal('1'), quantity=2),
+            article.create(product_name='A', product_unit_price=Decimal('1'), quantity=3),
+            article.create(product_name='C', product_unit_price=Decimal('1'), quantity=5),
+        ],
     ),
     'same product added multiple times': CreateBasketTestCase(
-        articles=[
+        input=[
             article.create(product_name='B', product_unit_price=Decimal('1'), quantity=1),
             article.create(product_name='A', product_unit_price=Decimal('1'), quantity=1),
             article.create(product_name='B', product_unit_price=Decimal('1'), quantity=5),
             article.create(product_name='B', product_unit_price=Decimal('1'), quantity=3),
             article.create(product_name='A', product_unit_price=Decimal('1'), quantity=2),
         ],
-        expected=basket.Basket(
-            articles={
-                product.create(name='A', unit_price=Decimal('1')): 3,
-                product.create(name='B', unit_price=Decimal('1')): 9,
-            }
-        ),
+        expected=[
+            article.create(product_name='B', product_unit_price=Decimal('1'), quantity=9),
+            article.create(product_name='A', product_unit_price=Decimal('1'), quantity=3),
+        ],
     ),
     'same product name, but different unit prices': CreateBasketTestCase(
-        articles=[
+        input=[
             article.create(product_name='A', product_unit_price=Decimal('1'), quantity=2),
             article.create(product_name='A', product_unit_price=Decimal('1.1'), quantity=3),
         ],
-        expected=basket.Basket(
-            articles={
-                product.create(name='A', unit_price=Decimal('1')): 2,
-                product.create(name='A', unit_price=Decimal('1.1')): 3,
-            }
-        ),
+        expected=[
+            article.create(product_name='A', product_unit_price=Decimal('1'), quantity=2),
+            article.create(product_name='A', product_unit_price=Decimal('1.1'), quantity=3),
+        ],
     ),
 }
 
@@ -98,19 +90,12 @@ def make_env_fixture(info):
 
 @create_basket_test_cases
 def test_create_returns_use_case(case):
-    run = create_basket.create(articles=case.articles)
+    run = create_basket.create(articles=case.input)
     assert isinstance(run, create_basket.CreateBasketUseCase)
 
 
 @create_basket_test_cases
-def test_running_create_basket_use_cases_returns_basket(case, make_env_fixture):
-    run = create_basket.create(articles=case.articles)
-    env = make_env_fixture()
-    assert isinstance(run(env), basket.Basket)
-
-
-@create_basket_test_cases
-def test_returned_basket_contains_added_articles(case, make_env_fixture):
-    run = create_basket.create(articles=case.articles)
+def test_use_cases_return_list_of_articles_in_basket(case, make_env_fixture):
+    run = create_basket.create(articles=case.input)
     env = make_env_fixture()
     assert case.expected == run(env)
