@@ -1,8 +1,12 @@
 from copy import deepcopy
 from dataclasses import dataclass
-from typing import Mapping
+from typing import Iterable, Mapping
 
-from taxes.services.basket.entities.article import Article, Quantity
+from taxes.services.basket.entities.article import (
+    Article,
+    create as create_article,
+    Quantity,
+)
 from taxes.services.basket.entities.product import Product
 
 
@@ -36,3 +40,14 @@ def add_article(article: Article, basket: Basket) -> Basket:
         **deepcopy(basket.articles),
         product_to_add: quantity,
     })
+
+
+def list_articles(basket: Basket) -> Iterable[Article]:
+    """ Return the list of articles in :param basket:. """
+    return [
+        create_article(
+            quantity=quantity,
+            product_name=product.name,
+            product_unit_price=product.unit_price,
+        ) for product, quantity in basket.articles.items()
+    ]

@@ -2,7 +2,6 @@ import argparse
 import logging
 
 from taxes.adapters import stdio
-from taxes.adapters.basket_service import BasketServiceAdapter
 from taxes.services.basket.service import create as create_basket_service
 from taxes.services.receipt.service import create as create_receipt_service
 from taxes.services.tax import create as create_tax_service
@@ -23,15 +22,12 @@ parser.add_argument(
 
 def main():
     tax_service = create_tax_service(logger=logging.getLogger('tax'))
-    basket_service = BasketServiceAdapter(
-        basket_service=create_basket_service(
-            logger=logging.getLogger('basket')
-        )
-    )
+    basket_service = create_basket_service(logger=logging.getLogger('basket'))
     receipt_service = create_receipt_service(
         logger=logging.getLogger('receipt'),
         tax_service=tax_service,
     )
+
     args = parser.parse_args()
     if args.input:
         purchased_articles = stdio.loads(args.input)
