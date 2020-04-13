@@ -26,24 +26,24 @@ class ReceiptService:
 
 class Dependency:
     class Logger(Protocol):
-        def info(self, msg: str):
+        def info(self, msg: str):  # pragma: no cover
             ...
 
-        def debug(self, msg: str):
+        def debug(self, msg: str):  # pragma: no cover
             ...
 
     class TaxService(Protocol):
         def add_taxes(
             self,
             articles: Iterable[Article]
-        ) -> Iterable[ItemToInsert]:
+        ) -> Iterable[ItemToInsert]:  # pragma: no cover
             ...
 
     class BasketService(Protocol):
         def create_basket(
             self,
             articles: Iterable[Article],
-        ) -> Iterable[Article]:
+        ) -> Iterable[Article]:  # pragma: no cover
             ...
 
 
