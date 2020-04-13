@@ -1,6 +1,8 @@
 import re
 from decimal import Decimal
 
+from taxes.services.basket.entities.purchased_item import PurchasedItem
+
 
 class ParserError:
     class MalformedInput(Exception):
@@ -27,14 +29,14 @@ RE_PARSE_ROW = ''.join([
 parse_row = re.compile(RE_PARSE_ROW).match
 
 
-def parse_item(input: str):
-    """ Parses the :param input: string and returns a dictionary representing
-    the parsed item. """
+def parse_item(input: str) -> PurchasedItem:
+    """ Parses the :param input: string and returns a PurchasedItem. """
     parsed = parse_row(input)
     if not parsed:
         raise ParserError.MalformedInput()
-    return {
-        'quantity': int(parsed['quantity']),
-        'product_name': parsed['product_name'].lower(),
-        'unit_price': Decimal(parsed['unit_price']),
-    }
+    return PurchasedItem(
+        quantity=int(parsed['quantity']),
+        product_name=parsed['product_name'].lower(),
+        unit_price=Decimal(parsed['unit_price']),
+        imported=False,
+    )

@@ -2,6 +2,7 @@ from dataclasses import dataclass
 from typing import Iterable, Protocol
 
 from taxes.services.basket.entities.article import Article
+from taxes.services.basket.entities.purchased_item import PurchasedItem
 from taxes.services.basket.use_cases import (
     create_basket as create_basket_use_case,
 )
@@ -11,8 +12,11 @@ from taxes.services.basket.use_cases import (
 class BasketService:
     logger: 'Dependency.Logger'
 
-    def create_basket(self, articles: Iterable[Article]) -> Iterable[Article]:
-        run = create_basket_use_case.create(articles=articles)
+    def create_basket(
+        self,
+        purchased_items: Iterable[PurchasedItem],
+    ) -> Iterable[Article]:
+        run = create_basket_use_case.create(purchased_items=purchased_items)
         env = create_basket_use_case.Environment(info=self.logger.info)
         return run(env)
 

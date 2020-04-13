@@ -27,4 +27,4 @@ def test_create_returns_service(make_dependencies_fixture):
 @create_basket_test_cases
 def test_create_basket_returns_basket(case, make_dependencies_fixture):
     service = create_basket_service(**make_dependencies_fixture())
-    assert case.expected == service.create_basket(articles=case.input)
+    assert case.expected == service.create_basket(purchased_items=case.input)

@@ -6,12 +6,13 @@ from unittest.mock import Mock
 import pytest
 
 from taxes.services.basket.entities import article, basket, product
+from taxes.services.basket.entities.purchased_item import PurchasedItem
 from taxes.services.basket.use_cases import create_basket
 
 
 @dataclass
 class CreateBasketTestCase:
-    input: List[article.Article]
+    input: List[PurchasedItem]
     expected: List[article.Article]
 
 
@@ -22,7 +23,7 @@ TEST_CASES = {
     ),
     'list with single article': CreateBasketTestCase(
         input=[
-            article.create(product_name='A', product_unit_price=Decimal('1'), quantity=1),
+            PurchasedItem(product_name='A', unit_price=Decimal('1'), quantity=1, imported=False),
         ],
         expected=[
             article.create(product_name='A', product_unit_price=Decimal('1'), quantity=1),
@@ -30,9 +31,9 @@ TEST_CASES = {
     ),
     'multiple products': CreateBasketTestCase(
         input=[
-            article.create(product_name='B', product_unit_price=Decimal('1'), quantity=2),
-            article.create(product_name='A', product_unit_price=Decimal('1'), quantity=3),
-            article.create(product_name='C', product_unit_price=Decimal('1'), quantity=5),
+            PurchasedItem(product_name='B', unit_price=Decimal('1'), quantity=2, imported=False),
+            PurchasedItem(product_name='A', unit_price=Decimal('1'), quantity=3, imported=False),
+            PurchasedItem(product_name='C', unit_price=Decimal('1'), quantity=5, imported=False),
         ],
         expected=[
             article.create(product_name='B', product_unit_price=Decimal('1'), quantity=2),
@@ -42,11 +43,11 @@ TEST_CASES = {
     ),
     'same product added multiple times': CreateBasketTestCase(
         input=[
-            article.create(product_name='B', product_unit_price=Decimal('1'), quantity=1),
-            article.create(product_name='A', product_unit_price=Decimal('1'), quantity=1),
-            article.create(product_name='B', product_unit_price=Decimal('1'), quantity=5),
-            article.create(product_name='B', product_unit_price=Decimal('1'), quantity=3),
-            article.create(product_name='A', product_unit_price=Decimal('1'), quantity=2),
+            PurchasedItem(product_name='B', unit_price=Decimal('1'), quantity=1, imported=False),
+            PurchasedItem(product_name='A', unit_price=Decimal('1'), quantity=1, imported=False),
+            PurchasedItem(product_name='B', unit_price=Decimal('1'), quantity=5, imported=False),
+            PurchasedItem(product_name='B', unit_price=Decimal('1'), quantity=3, imported=False),
+            PurchasedItem(product_name='A', unit_price=Decimal('1'), quantity=2, imported=False),
         ],
         expected=[
             article.create(product_name='B', product_unit_price=Decimal('1'), quantity=9),
@@ -55,8 +56,8 @@ TEST_CASES = {
     ),
     'same product name, but different unit prices': CreateBasketTestCase(
         input=[
-            article.create(product_name='A', product_unit_price=Decimal('1'), quantity=2),
-            article.create(product_name='A', product_unit_price=Decimal('1.1'), quantity=3),
+            PurchasedItem(product_name='A', unit_price=Decimal('1'), quantity=2, imported=False),
+            PurchasedItem(product_name='A', unit_price=Decimal('1.1'), quantity=3, imported=False),
         ],
         expected=[
             article.create(product_name='A', product_unit_price=Decimal('1'), quantity=2),
@@ -90,12 +91,12 @@ def make_env_fixture(info):
 
 @create_basket_test_cases
 def test_create_returns_use_case(case):
-    run = create_basket.create(articles=case.input)
+    run = create_basket.create(purchased_items=case.input)
     assert isinstance(run, create_basket.CreateBasketUseCase)
 
 
 @create_basket_test_cases
 def test_use_cases_return_list_of_articles_in_basket(case, make_env_fixture):
-    run = create_basket.create(articles=case.input)
+    run = create_basket.create(purchased_items=case.input)
     env = make_env_fixture()
     assert case.expected == run(env)
