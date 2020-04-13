@@ -50,6 +50,7 @@ def add_article(article: Article, basket: Basket) -> Basket:
     key = create_key(article)
     updated_article = create_article(
         product_name=key.product_name,
+        product_category=article.product.category,
         unit_price_before_taxes=key.unit_price,
         quantity=get_quantity(key, basket) + article.quantity,
         imported=key.imported
@@ -63,6 +64,7 @@ def list_articles(basket: Basket) -> Iterable[Article]:
     return [
         create_article(
             product_name=article.product.name,
+            product_category=article.product.category,
             unit_price_before_taxes=article.unit_price_before_taxes,
             imported=article.imported,
             quantity=article.quantity,

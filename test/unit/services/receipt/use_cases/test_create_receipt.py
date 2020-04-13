@@ -32,6 +32,7 @@ TEST_CASES = {
                 article=article.create(
                     quantity=1,
                     product_name='test-product',
+                    product_category='cat-dummy',
                     unit_price_before_taxes=Decimal('1'),
                     imported=False,
                 ),
@@ -56,6 +57,7 @@ TEST_CASES = {
                 article=article.create(
                     quantity=3,
                     product_name='test-product',
+                    product_category='cat-dummy',
                     unit_price_before_taxes=Decimal('1'),
                     imported=False,
                 ),
@@ -80,6 +82,7 @@ TEST_CASES = {
                 article=article.create(
                     quantity=1,
                     product_name='test-product',
+                    product_category='cat-dummy',
                     unit_price_before_taxes=Decimal('2'),
                     imported=False,
                 ),
@@ -104,6 +107,7 @@ TEST_CASES = {
                 article=article.create(
                     quantity=1,
                     product_name='test-product',
+                    product_category='cat-dummy',
                     unit_price_before_taxes=Decimal('2'),
                     imported=False,
                 ),
@@ -113,6 +117,7 @@ TEST_CASES = {
                 article=article.create(
                     quantity=1,
                     product_name='test-product-2',
+                    product_category='cat-dummy',
                     unit_price_before_taxes=Decimal('1'),
                     imported=True,
                 ),
@@ -142,6 +147,7 @@ TEST_CASES = {
                 article=article.create(
                     quantity=1,
                     product_name='test-product',
+                    product_category='cat-dummy',
                     unit_price_before_taxes=Decimal('2'),
                     imported=False,
                 ),
@@ -154,6 +160,7 @@ TEST_CASES = {
                 article=article.create(
                     quantity=1,
                     product_name='test-product-2',
+                    product_category='cat-dummy',
                     unit_price_before_taxes=Decimal('1'),
                     imported=True,
                 ),

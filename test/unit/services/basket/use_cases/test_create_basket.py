@@ -12,8 +12,13 @@ from taxes.services.basket.use_cases import create_basket
 
 @dataclass
 class CreateBasketTestCase:
-    input: List[PurchasedItem]
+    input: List['TestCaseInput']
     expected: List[article.Article]
+
+    @dataclass
+    class TestCaseInput:
+        purchased_item: PurchasedItem
+        product_category: str
 
 
 TEST_CASES = {
@@ -23,45 +28,94 @@ TEST_CASES = {
     ),
     'list with single article': CreateBasketTestCase(
         input=[
-            PurchasedItem(product_name='A', unit_price=Decimal('1'), quantity=1, imported=False),
+            CreateBasketTestCase.TestCaseInput(
+                purchased_item=PurchasedItem(product_name='A', unit_price=Decimal('1'), quantity=1, imported=False),
+                product_category='dummy',
+            ),
         ],
         expected=[
-            article.create(product_name='A', unit_price_before_taxes=Decimal('1'), quantity=1, imported=False),
+            article.create(product_name='A', product_category='dummy', unit_price_before_taxes=Decimal('1'), quantity=1, imported=False),
         ],
     ),
     'multiple products': CreateBasketTestCase(
         input=[
-            PurchasedItem(product_name='B', unit_price=Decimal('1'), quantity=2, imported=False),
-            PurchasedItem(product_name='A', unit_price=Decimal('1'), quantity=3, imported=False),
-            PurchasedItem(product_name='C', unit_price=Decimal('1'), quantity=5, imported=False),
+            CreateBasketTestCase.TestCaseInput(
+                purchased_item=PurchasedItem(product_name='B', unit_price=Decimal('1'), quantity=2, imported=False),
+                product_category='dummy',
+            ),
+            CreateBasketTestCase.TestCaseInput(
+                purchased_item=PurchasedItem(product_name='A', unit_price=Decimal('1'), quantity=3, imported=False),
+                product_category='dummy',
+            ),
+            CreateBasketTestCase.TestCaseInput(
+                purchased_item=PurchasedItem(product_name='C', unit_price=Decimal('1'), quantity=5, imported=False),
+                product_category='dummy',
+            )
         ],
         expected=[
-            article.create(product_name='B', unit_price_before_taxes=Decimal('1'), quantity=2, imported=False),
-            article.create(product_name='A', unit_price_before_taxes=Decimal('1'), quantity=3, imported=False),
-            article.create(product_name='C', unit_price_before_taxes=Decimal('1'), quantity=5, imported=False),
+            article.create(product_name='B', product_category='dummy', unit_price_before_taxes=Decimal('1'), quantity=2, imported=False),
+            article.create(product_name='A', product_category='dummy', unit_price_before_taxes=Decimal('1'), quantity=3, imported=False),
+            article.create(product_name='C', product_category='dummy', unit_price_before_taxes=Decimal('1'), quantity=5, imported=False),
         ],
     ),
     'same product added multiple times': CreateBasketTestCase(
         input=[
-            PurchasedItem(product_name='B', unit_price=Decimal('1'), quantity=1, imported=False),
-            PurchasedItem(product_name='A', unit_price=Decimal('1'), quantity=1, imported=False),
-            PurchasedItem(product_name='B', unit_price=Decimal('1'), quantity=5, imported=False),
-            PurchasedItem(product_name='B', unit_price=Decimal('1'), quantity=3, imported=False),
-            PurchasedItem(product_name='A', unit_price=Decimal('1'), quantity=2, imported=False),
+            CreateBasketTestCase.TestCaseInput(
+                purchased_item=PurchasedItem(product_name='B', unit_price=Decimal('1'), quantity=1, imported=True),
+                product_category='dummy',
+            ),
+            CreateBasketTestCase.TestCaseInput(
+                purchased_item=PurchasedItem(product_name='A', unit_price=Decimal('1'), quantity=1, imported=False),
+                product_category='dummy',
+            ),
+            CreateBasketTestCase.TestCaseInput(
+                purchased_item=PurchasedItem(product_name='B', unit_price=Decimal('1'), quantity=5, imported=True),
+                product_category='dummy',
+            ),
+            CreateBasketTestCase.TestCaseInput(
+                purchased_item=PurchasedItem(product_name='B', unit_price=Decimal('1'), quantity=3, imported=True),
+                product_category='dummy',
+            ),
+            CreateBasketTestCase.TestCaseInput(
+                purchased_item=PurchasedItem(product_name='A', unit_price=Decimal('1'), quantity=2, imported=False),
+                product_category='dummy',
+            ),
         ],
         expected=[
-            article.create(product_name='B', unit_price_before_taxes=Decimal('1'), quantity=9, imported=False),
-            article.create(product_name='A', unit_price_before_taxes=Decimal('1'), quantity=3, imported=False),
+            article.create(product_name='B', product_category='dummy', unit_price_before_taxes=Decimal('1'), quantity=9, imported=True),
+            article.create(product_name='A', product_category='dummy', unit_price_before_taxes=Decimal('1'), quantity=3, imported=False),
         ],
     ),
-    'same product name, but different unit prices': CreateBasketTestCase(
+    'same product, but different unit prices': CreateBasketTestCase(
         input=[
-            PurchasedItem(product_name='A', unit_price=Decimal('1'), quantity=2, imported=False),
-            PurchasedItem(product_name='A', unit_price=Decimal('1.1'), quantity=3, imported=False),
+            CreateBasketTestCase.TestCaseInput(
+                purchased_item=PurchasedItem(product_name='A', unit_price=Decimal('1'), quantity=2, imported=False),
+                product_category='dummy',
+            ),
+            CreateBasketTestCase.TestCaseInput(
+                purchased_item=PurchasedItem(product_name='A', unit_price=Decimal('1.1'), quantity=3, imported=False),
+                product_category='dummy',
+            ),
         ],
         expected=[
-            article.create(product_name='A', unit_price_before_taxes=Decimal('1'), quantity=2, imported=False),
-            article.create(product_name='A', unit_price_before_taxes=Decimal('1.1'), quantity=3, imported=False),
+            article.create(product_name='A', product_category='dummy', unit_price_before_taxes=Decimal('1'), quantity=2, imported=False),
+            article.create(product_name='A', product_category='dummy', unit_price_before_taxes=Decimal('1.1'), quantity=3, imported=False),
+        ],
+    ),
+    'same product and unit price, from different origins': CreateBasketTestCase(
+        input=[
+            CreateBasketTestCase.TestCaseInput(
+                purchased_item=PurchasedItem(product_name='A', unit_price=Decimal('1'), quantity=2, imported=False),
+                product_category='dummy',
+            ),
+            CreateBasketTestCase.TestCaseInput(
+                purchased_item=PurchasedItem(product_name='A', unit_price=Decimal('1'), quantity=3, imported=True),
+                product_category='dummy',
+            ),
+        ],
+        expected=[
+            article.create(product_name='A', product_category='dummy', unit_price_before_taxes=Decimal('1'), quantity=2, imported=False),
+            article.create(product_name='A', product_category='dummy', unit_price_before_taxes=Decimal('1'), quantity=3, imported=True),
         ],
     ),
 }
@@ -91,12 +145,14 @@ def make_env_fixture(info):
 
 @create_basket_test_cases
 def test_create_returns_use_case(case):
-    run = create_basket.create(purchased_items=case.input)
+    purchased_items = [i.purchased_item for i in case.input]
+    run = create_basket.create(purchased_items=purchased_items)
     assert isinstance(run, create_basket.CreateBasketUseCase)
 
 
 @create_basket_test_cases
 def test_use_cases_return_list_of_articles_in_basket(case, make_env_fixture):
-    run = create_basket.create(purchased_items=case.input)
+    purchased_items = [i.purchased_item for i in case.input]
+    run = create_basket.create(purchased_items=purchased_items)
     env = make_env_fixture()
     assert case.expected == run(env)
