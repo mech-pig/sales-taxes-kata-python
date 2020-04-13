@@ -10,7 +10,7 @@ help: ## show this help
 POETRY_INSTALL_EXTRAS = --extras "lint" --extras "test-unit" --extras "test-e2e"
 PYTEST_WATCH_ARGS = -vv
 PYTEST_TEST_ARGS = $(PYTEST_WATCH_ARGS) --maxfail=2 -rf -vv --strict --cov src --cov-branch
-PYTEST_ADDITIONAL_ARGS := ''
+PYTEST_ADDITIONAL_ARGS :=
 
 .PHONY: install
 install: install-clean  ## install the app
@@ -40,12 +40,12 @@ tdd: ## start a TDD session (re-run test on saves)
 test: test-unit test-e2e  ## run all tests
 
 .PHONY: test-e2e
-test-e2e: test-e2e  ## run end-to-end tests
-	poetry run behave
+test-e2e:  ## run end-to-end tests
+	poetry run pytest test/e2e $(PYTEST_WATCH_ARGS) $(PYTEST_ADDITIONAL_ARGS)
 
 .PHONY: test-unit
 test-unit: ## run unit tests
-	poetry run pytest $(PYTEST_TEST_ARGS) $(PYTEST_ADDITIONAL_ARGS)
+	poetry run pytest test/unit $(PYTEST_TEST_ARGS) $(PYTEST_ADDITIONAL_ARGS)
 
 
 # Release

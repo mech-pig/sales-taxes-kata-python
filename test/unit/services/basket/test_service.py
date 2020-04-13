@@ -3,7 +3,7 @@ from unittest.mock import Mock, sentinel
 import pytest
 
 from taxes.services import basket
-from test.services.basket.use_cases.test_create_basket import create_basket_test_cases
+from basket.use_cases.test_create_basket import create_basket_test_cases
 
 
 @pytest.fixture

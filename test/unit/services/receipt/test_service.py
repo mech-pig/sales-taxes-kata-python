@@ -3,7 +3,7 @@ from unittest.mock import Mock, sentinel
 import pytest
 
 from taxes.services import receipt
-from test.services.receipt.use_cases.test_create_receipt import create_receipt_test_cases
+from receipt.use_cases.test_create_receipt import create_receipt_test_cases
 
 
 @pytest.fixture
