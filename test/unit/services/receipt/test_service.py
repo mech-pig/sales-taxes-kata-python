@@ -16,7 +16,6 @@ def make_dependencies_fixture():
     def build():
         return {
             'logger': Mock(spec=ReceiptServiceDependency.Logger),
-            'basket_service': Mock(spec=ReceiptServiceDependency.BasketService),
             'tax_service': Mock(spec=ReceiptServiceDependency.TaxService),
         }
     return build
@@ -30,15 +29,14 @@ def test_create_returns_service(make_dependencies_fixture):
 @create_receipt_test_cases
 def test_create_receipt_returns_receipt(case, make_dependencies_fixture):
     service = create_receipt_service(**make_dependencies_fixture())
-    service.basket_service.create_basket.side_effect = lambda a: a
     service.tax_service.add_taxes.return_value = [
         ItemToInsert(
-            description=p.article_in_basket.product.name,
-            quantity=p.article_in_basket.quantity,
-            unit_price_before_taxes=p.article_in_basket.product.unit_price,
-            taxes_to_apply=p.taxes_to_apply,
-        ) for p in case.params
+            description=i.article.product.name,
+            quantity=i.article.quantity,
+            unit_price_before_taxes=i.article.product.unit_price,
+            taxes_to_apply=i.taxes_to_apply,
+        ) for i in case.input
     ]
 
-    articles = [p.article_in_basket for p in case.params]
+    articles = [i.article for i in case.input]
     assert case.expected == service.create_receipt(articles=articles)

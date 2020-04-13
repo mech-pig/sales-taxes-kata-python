@@ -3,13 +3,10 @@ from typing import Iterable
 
 from taxes.services.basket.service import BasketService
 from taxes.services.basket.entities import article
-from taxes.services.receipt.service import (
-    Dependency as ReceiptServiceDependency
-)
 
 
 @dataclass
-class BasketServiceAdapter(ReceiptServiceDependency.BasketService):
+class BasketServiceAdapter:
     basket_service: BasketService
 
     def create_basket(

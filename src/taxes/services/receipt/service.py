@@ -11,14 +11,12 @@ from taxes.services.receipt.use_cases import (
 @dataclass
 class ReceiptService:
     logger: 'Dependency.Logger'
-    basket_service: 'Dependency.BasketService'
     tax_service: 'Dependency.TaxService'
 
     def create_receipt(self, articles: Iterable[Article]):
         run = create_receipt_use_case.create(articles=articles)
         env = create_receipt_use_case.Environment(
             info=self.logger.info,
-            create_basket=self.basket_service.create_basket,
             add_taxes=self.tax_service.add_taxes,
         )
         return run(env)
@@ -39,25 +37,10 @@ class Dependency:
         ) -> Iterable[ItemToInsert]:  # pragma: no cover
             ...
 
-    class BasketService(Protocol):
-        def create_basket(
-            self,
-            articles: Iterable[Article],
-        ) -> Iterable[Article]:  # pragma: no cover
-            ...
 
-
-def create(
-    logger: Dependency.Logger,
-    basket_service: Dependency.BasketService,
-    tax_service: Dependency.TaxService,
-):
+def create(logger: Dependency.Logger, tax_service: Dependency.TaxService):
     logger.debug(
-        f'instantiating receipt service with logger={logger}, ',
-        f'basket_service={basket_service} and tax_service={tax_service}'
+        f'instantiating receipt service ',
+        f'with logger={logger} and tax_service={tax_service}'
     )
-    return ReceiptService(
-        logger=logger,
-        basket_service=basket_service,
-        tax_service=tax_service,
-    )
+    return ReceiptService(logger=logger, tax_service=tax_service)

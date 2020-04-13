@@ -30,12 +30,12 @@ def main():
     )
     receipt_service = create_receipt_service(
         logger=logging.getLogger('receipt'),
-        basket_service=basket_service,
         tax_service=tax_service,
     )
     args = parser.parse_args()
     if args.input:
-        articles = stdio.loads(args.input)
-        receipt = receipt_service.create_receipt(articles=articles)
+        purchased_articles = stdio.loads(args.input)
+        articles_in_basket = basket_service.create_basket(purchased_articles)
+        receipt = receipt_service.create_receipt(articles=articles_in_basket)
         result = stdio.dump(receipt)
         print(result)
