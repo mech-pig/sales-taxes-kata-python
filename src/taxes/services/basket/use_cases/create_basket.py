@@ -11,6 +11,7 @@ from taxes.services.basket.entities.basket import (
     empty as create_empty_basket,
     list_articles as list_articles_in_basket,
 )
+from taxes.services.basket.entities.product import Product
 from taxes.services.basket.entities.purchased_item import PurchasedItem
 
 
@@ -23,9 +24,15 @@ class CreateBasketUseCase:
 
         def add_item(basket: Basket, item: PurchasedItem):
             env.info(f'creating article from {item}')
+            # TODO fetch from repository
+            product = Product(
+                name=item.product_name,
+                category='dummy',
+            )
             article = create_article(
                 quantity=item.quantity,
-                product_name=item.product_name,
+                product_name=product.name,
+                product_category=product.category,
                 unit_price_before_taxes=item.unit_price,
                 imported=item.imported,
             )

@@ -33,6 +33,7 @@ def create(
     quantity: int,
     imported: bool,
     product_name: str,
+    product_category: str,
     unit_price_before_taxes: Decimal,
 ):
     """ Creates an article.
@@ -50,6 +51,7 @@ def create(
     return Article(
         product=Product(
             name=product_name,
+            category=product_category,
         ),
         unit_price_before_taxes=unit_price_before_taxes,
         imported=imported,

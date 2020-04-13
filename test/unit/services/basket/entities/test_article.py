@@ -11,6 +11,7 @@ def make_article_kwargs():
         return {
             'quantity': 12,
             'product_name': 'a-cool-product',
+            'product_category': 'test-product-category',
             'unit_price_before_taxes': Decimal('12.23'),
             'imported': False,
             **overrides,
@@ -23,6 +24,7 @@ def test_create_returns_article(make_article_kwargs):
     expected = article.Article(
         product=product.Product(
             name=kwargs['product_name'],
+            category=kwargs['product_category'],
         ),
         unit_price_before_taxes=kwargs['unit_price_before_taxes'],
         quantity=kwargs['quantity'],
