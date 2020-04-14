@@ -24,11 +24,11 @@ class CreateBasketUseCase:
 
         def add_item(basket: Basket, item: PurchasedItem):
             env.info(f'creating article from {item}')
-            # TODO fetch from repository
-            product = Product(
-                name=item.product_name,
-                category='dummy',
-            )
+
+            env.info(f'getting product {item.product_name}')
+            product = env.get_product_by_name(name=item.product_name)
+            env.info(f'product {product} retrieved')
+
             article = create_article(
                 quantity=item.quantity,
                 product_name=product.name,
@@ -46,6 +46,7 @@ class CreateBasketUseCase:
 @dataclass
 class Environment:
     info: Callable[[str], None]
+    get_product_by_name: Callable[[str], Product]
 
 
 def create(purchased_items: Iterable[PurchasedItem]) -> CreateBasketUseCase:
