@@ -1,7 +1,7 @@
 from dataclasses import dataclass
 from decimal import Decimal, ROUND_HALF_UP
 from functools import reduce
-from typing import List
+from typing import Iterable
 
 
 @dataclass(frozen=True)
@@ -42,9 +42,9 @@ def calculate_tax_amount(price: Decimal, tax: Tax) -> Decimal:
     return round_tax_amount(price * tax.rate)
 
 
-def apply(price: Decimal, taxes: List[Tax]) -> Decimal:
+def apply(price: Decimal, taxes: Iterable[Tax]) -> Decimal:
     """ Apply :param taxes: to :param price: and return the amount due. """
     def add_to_subtotal(subtotal: Decimal, tax: Tax) -> Decimal:
         return subtotal + calculate_tax_amount(price, tax)
 
-    return reduce(add_to_subtotal, taxes, price)
+    return reduce(add_to_subtotal, taxes, Decimal('0.00'))
