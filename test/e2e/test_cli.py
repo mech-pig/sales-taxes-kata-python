@@ -126,11 +126,11 @@ TEST_CASES = {
             4 imported packet of headache pills at 9.75
         """,
         expected="""
-            5 imported book: 65.45
+            5 imported book: 65.70
             3 imported chocolate bar: 2.70
             4 imported packet of headache pills: 41.00
-            Sales Taxes: 5.15
-            Total: 109.15
+            Sales Taxes: 5.40
+            Total: 109.40
         """
     ),
     'non imported articles, exempt and non-exempt': CliTestCase(
@@ -176,22 +176,22 @@ TEST_CASES = {
     #         Total: 74.68
     #     """
     # ),
-    # 'imported articles, exempt and non-exempt': CliTestCase(
-    #     input="""
-    #         1 imported bottle of perfume at 27.99
-    #         1 bottle of perfume at 18.99
-    #         1 packet of headache pills at 9.75
-    #         3 imported box of chocolates at 11.25
-    #     """,
-    #     expected="""
-    #         1 imported bottle of perfume: 32.19
-    #         1 bottle of perfume: 20.89
-    #         1 packet of headache pills: 9.75
-    #         3 imported box of chocolates: 35.55 33.75
-    #         Sales Taxes: 7.90
-    #         Total: 98.38
-    #     """
-    # ),
+    'imported articles, exempt and non-exempt': CliTestCase(
+        input="""
+            1 imported bottle of perfume at 27.99
+            1 bottle of perfume at 18.99
+            1 packet of headache pills at 9.75
+            3 imported box of chocolates at 11.25
+        """,
+        expected="""
+            1 imported bottle of perfume: 32.19
+            1 bottle of perfume: 20.89
+            1 packet of headache pills: 9.75
+            3 imported box of chocolates: 35.55
+            Sales Taxes: 7.90
+            Total: 98.38
+        """
+    ),
 }
 
 

@@ -1,5 +1,5 @@
 from dataclasses import dataclass
-from decimal import Decimal, ROUND_HALF_UP
+from decimal import Decimal, ROUND_UP
 from functools import reduce
 from typing import Iterable
 
@@ -30,7 +30,7 @@ def create(id: str, rate: Decimal):
 def round_tax_amount(amount: Decimal) -> Decimal:
     """ Round tax amount up to the nearest `0.05`. """
     precision = Decimal('0.05')
-    return (amount / precision).quantize(0, ROUND_HALF_UP) * precision
+    return (amount / precision).quantize(0, ROUND_UP) * precision
 
 
 def calculate_tax_amount(price: Decimal, tax: Tax) -> Decimal:
