@@ -6,7 +6,6 @@ from typing import Iterable, Mapping
 from taxes.services.basket.entities.article import (
     Article,
     create as create_article,
-    Quantity,
 )
 
 
@@ -35,7 +34,7 @@ def empty():
     return Basket(articles={})
 
 
-def get_quantity(key: BasketEntryKey, basket: Basket) -> Quantity:
+def get_quantity(key: BasketEntryKey, basket: Basket) -> int:
     article = basket.articles.get(key)
     if article:
         return article.quantity

@@ -1,19 +1,14 @@
 from dataclasses import dataclass
 from decimal import Decimal
-from typing import NewType
-
 
 from taxes.services.basket.entities.product import Product
-
-
-Quantity = NewType('Quantity', int)
 
 
 @dataclass(frozen=True)
 class Article:
     product: Product
     imported: bool
-    quantity: Quantity
+    quantity: int
     unit_price_before_taxes: Decimal
 
 
