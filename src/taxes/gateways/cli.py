@@ -1,6 +1,7 @@
 import argparse
 import logging
 
+from taxes.adapters.product_repository import KATA_EXAMPLE_PRODUCT_REPOSITORY
 from taxes.services.basket.service import create as create_basket_service
 from taxes.services.receipt.entities.receipt import Receipt, ReceiptItem
 from taxes.services.receipt.service import create as create_receipt_service
@@ -43,8 +44,13 @@ def dump_receipt(receipt: Receipt):
 
 
 def main():
-    tax_service = create_tax_service(logger=logging.getLogger('tax'))
-    basket_service = create_basket_service(logger=logging.getLogger('basket'))
+    tax_service = create_tax_service(
+        logger=logging.getLogger('tax'),
+    )
+    basket_service = create_basket_service(
+        logger=logging.getLogger('basket'),
+        product_repository=KATA_EXAMPLE_PRODUCT_REPOSITORY,
+    )
     receipt_service = create_receipt_service(
         logger=logging.getLogger('receipt'),
         tax_service=tax_service,
