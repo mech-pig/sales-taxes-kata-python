@@ -15,7 +15,12 @@ from taxes.services.receipt.entities.taxed_article import TaxedArticle
 class CreateReceiptUseCase:
     articles: Iterable[Article]
 
-    def __call__(self, env: 'Environment') -> Receipt:
+    @dataclass
+    class Environment:
+        info: Callable[[str], None]
+        add_taxes: Callable[[Iterable[Article]], Iterable[TaxedArticle]]
+
+    def __call__(self, env: Environment) -> Receipt:
         env.info('adding taxes to articles in basket')
         taxed_articles = env.add_taxes(self.articles)
         env.info('taxes added')
@@ -33,13 +38,3 @@ class CreateReceiptUseCase:
         env.info('receipt created')
 
         return receipt
-
-
-@dataclass
-class Environment:
-    info: Callable[[str], None]
-    add_taxes: Callable[[Iterable[Article]], Iterable[TaxedArticle]]
-
-
-def create(articles: Iterable[Article]) -> CreateReceiptUseCase:
-    return CreateReceiptUseCase(articles=articles)

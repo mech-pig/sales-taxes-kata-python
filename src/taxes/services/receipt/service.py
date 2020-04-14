@@ -3,9 +3,7 @@ from typing import Iterable, Protocol
 
 from taxes.services.basket.entities.article import Article
 from taxes.services.receipt.entities.taxed_article import TaxedArticle
-from taxes.services.receipt.use_cases import (
-    create_receipt as create_receipt_use_case,
-)
+from taxes.services.receipt.use_cases import CreateReceiptUseCase
 
 
 @dataclass
@@ -14,8 +12,8 @@ class ReceiptService:
     tax_service: 'Dependency.TaxService'
 
     def create_receipt(self, articles: Iterable[Article]):
-        run = create_receipt_use_case.create(articles=articles)
-        env = create_receipt_use_case.Environment(
+        run = CreateReceiptUseCase(articles=articles)
+        env = CreateReceiptUseCase.Environment(
             info=self.logger.info,
             add_taxes=self.tax_service.add_taxes,
         )
