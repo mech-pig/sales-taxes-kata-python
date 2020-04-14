@@ -68,27 +68,11 @@ def test_create_raises_error_if_tax_is_not_positive(make_tax_kwargs, rate):
     ),
     pytest.param(
         {
-            'price': Decimal('1.0251'),
+            'price': Decimal('1.051'),
             'rate': Decimal('1'),
-            'expected': Decimal('1.05'),
+            'expected': Decimal('1.1'),
         },
-        id='amount rounded up to nearest 0.05 (half up)',
-    ),
-    pytest.param(
-        {
-            'price': Decimal('1.025'),
-            'rate': Decimal('1'),
-            'expected': Decimal('1.05'),
-        },
-        id='amount rounded up to nearest 0.05 (half up with tie)',
-    ),
-    pytest.param(
-        {
-            'price': Decimal('1.0249'),
-            'rate': Decimal('1'),
-            'expected': Decimal('1'),
-        },
-        id='amount rounded up to nearest 0.05 (down)',
+        id='amount rounded up to nearest 0.05 (1.051 -> 1.1)',
     ),
     pytest.param(
         {
@@ -96,7 +80,15 @@ def test_create_raises_error_if_tax_is_not_positive(make_tax_kwargs, rate):
             'rate': Decimal('1'),
             'expected': Decimal('1.05'),
         },
-        id='amount rounded up to nearest 0.05 (equal to precision)',
+        id='amount rounded up to nearest 0.05 (1.05 -> 1.05)',
+    ),
+    pytest.param(
+        {
+            'price': Decimal('1.0499'),
+            'rate': Decimal('1'),
+            'expected': Decimal('1.05'),
+        },
+        id='amount rounded up to nearest 0.05 (1.0499 -> 1.05)',
     ),
 ])
 def test_calculate_tax_amount_returns_amount_due_to_tax(case, make_tax_kwargs):
@@ -130,14 +122,6 @@ def test_calculate_tax_amount_returns_amount_due_to_tax(case, make_tax_kwargs):
             'expected': Decimal('0.1'),
         },
         id='single tax',
-    ),
-    pytest.param(
-        {
-            'rates': [Decimal('1')],
-            'price': Decimal('1.0249'),
-            'expected': Decimal('1'),
-        },
-        id='single tax with rounding (down)',
     ),
     pytest.param(
         {
