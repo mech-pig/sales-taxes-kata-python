@@ -3,7 +3,8 @@ from decimal import Decimal
 
 import pytest
 
-from taxes.services.receipt.entities import receipt, tax
+from taxes.services.receipt.entities import receipt
+from taxes.services.tax.entities import tax
 
 
 def test_empty_returns_receipt_without_items():

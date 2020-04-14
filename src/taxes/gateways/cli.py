@@ -6,7 +6,7 @@ from taxes.services.basket.service import create as create_basket_service
 from taxes.services.receipt.entities.receipt import Receipt, ReceiptItem
 from taxes.services.receipt.service import create as create_receipt_service
 from taxes.services.parser import parse_item
-from taxes.services.tax import create as create_tax_service
+from taxes.services.tax.service import create as create_tax_service
 
 
 parser = argparse.ArgumentParser(
