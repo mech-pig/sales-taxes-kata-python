@@ -15,8 +15,8 @@ from taxes.services.basket.entities.purchased_item import PurchasedItem
 
     # name
     pytest.param('1 item at 12.39', 1, 'item', Decimal('12.39'), False, id='product name: ascii lowercase word'),
-    pytest.param('1 ITEM at 12.39', 1, 'item', Decimal('12.39'), False, id='product name: ascii uppercase word'),
-    pytest.param('1 ItEm at 12.39', 1, 'item', Decimal('12.39'), False, id='product name: ascii mixed-case word'),
+    pytest.param('1 ITEM at 12.39', 1, 'ITEM', Decimal('12.39'), False, id='product name: ascii uppercase word'),
+    pytest.param('1 ItEm at 12.39', 1, 'ItEm', Decimal('12.39'), False, id='product name: ascii mixed-case word'),
     pytest.param('1 1-t_e.m! at 12.39', 1, '1-t_e.m!', Decimal('12.39'), False, id='product name: ascii string with symbols'),
     pytest.param('1 👍👍👍 at 12.39', 1, '👍👍👍', Decimal('12.39'), False, id='product name: unicode word'),
     pytest.param('1 this is an item at 12.39', 1, 'this is an item', Decimal('12.39'), False, id='product name: ascii string with spaces'),
