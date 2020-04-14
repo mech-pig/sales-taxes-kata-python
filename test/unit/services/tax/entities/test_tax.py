@@ -111,7 +111,7 @@ def test_calculate_tax_amount_returns_amount_due_to_tax(case, make_tax_kwargs):
         {
             'rates': [],
             'price': Decimal('1'),
-            'expected': Decimal('1'),
+            'expected': Decimal('0'),
         },
         id='no taxes to apply',
     ),
@@ -127,7 +127,7 @@ def test_calculate_tax_amount_returns_amount_due_to_tax(case, make_tax_kwargs):
         {
             'rates': [Decimal('0.05')],
             'price': Decimal('2'),
-            'expected': Decimal('2') + Decimal('0.1'),
+            'expected': Decimal('0.1'),
         },
         id='single tax',
     ),
@@ -135,7 +135,7 @@ def test_calculate_tax_amount_returns_amount_due_to_tax(case, make_tax_kwargs):
         {
             'rates': [Decimal('1')],
             'price': Decimal('1.0249'),
-            'expected': Decimal('1.0249') + Decimal('1'),
+            'expected': Decimal('1'),
         },
         id='single tax with rounding (down)',
     ),
@@ -143,7 +143,7 @@ def test_calculate_tax_amount_returns_amount_due_to_tax(case, make_tax_kwargs):
         {
             'rates': [Decimal('1')],
             'price': Decimal('1.025'),
-            'expected': Decimal('1.025') + Decimal('1.05'),
+            'expected': Decimal('1.05'),
         },
         id='single tax with rounding (up)',
     ),
@@ -151,7 +151,7 @@ def test_calculate_tax_amount_returns_amount_due_to_tax(case, make_tax_kwargs):
         {
             'rates': [Decimal('0.05'), Decimal('0.1')],
             'price': Decimal('2'),
-            'expected': Decimal('2') + Decimal('0.1') + Decimal('0.2'),
+            'expected': Decimal('0.1') + Decimal('0.2'),
         },
         id='multiple taxes',
     ),

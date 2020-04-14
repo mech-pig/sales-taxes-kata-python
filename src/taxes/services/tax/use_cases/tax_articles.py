@@ -1,29 +1,44 @@
 from dataclasses import dataclass
-from decimal import Decimal
 from typing import Callable, Iterable
 
-from taxes.services.basket.entities import article
-from taxes.services.receipt.entities import taxed_article
+from taxes.services.basket.entities.article import Article
+from taxes.services.receipt.entities.taxed_article import TaxedArticle
+from taxes.services.tax.entities.applicable_taxes import get_applicable_taxes
+from taxes.services.tax.entities.tax import apply as apply_taxes
 
 
 @dataclass
 class TaxArticlesUseCase:
-    articles: Iterable[article.Article]
+    articles: Iterable[Article]
 
-    def __call__(self, env: 'Environment') -> Iterable[taxed_article.TaxedArticle]:  # noqa: E501
+    def __call__(self, env: 'Environment') -> Iterable[TaxedArticle]:
         env.info('adding taxes to articles in basket')
-        taxed_items = [
-            taxed_article.TaxedArticle(
+
+        def tax_article(article):
+            env.info(f'get applicable taxes for {article}')
+            taxes_to_apply = get_applicable_taxes(article)
+
+            env.info(f'taxes to apply: {taxes_to_apply}')
+            tax_amount_due_per_unit = apply_taxes(
+                price=article.unit_price_before_taxes,
+                taxes=taxes_to_apply
+            )
+            env.info(f'tax amount due per unit: {tax_amount_due_per_unit}')
+
+            taxed_article = TaxedArticle(
                 product=article.product,
                 quantity=article.quantity,
                 imported=article.imported,
                 unit_price_before_taxes=article.unit_price_before_taxes,
-                tax_amount_due_per_unit=Decimal('0.00'),
-            ) for article in self.articles
-        ]
+                tax_amount_due_per_unit=tax_amount_due_per_unit,
+            )
+            env.info(f'taxes have been applied: {taxed_article}')
+            return taxed_article
+
+        taxed_articles = [tax_article(article) for article in self.articles]
         env.info('taxes added')
 
-        return taxed_items
+        return taxed_articles
 
 
 @dataclass
@@ -31,5 +46,5 @@ class Environment:
     info: Callable[[str], None]
 
 
-def create(articles: Iterable[article.Article]) -> TaxArticlesUseCase:
+def create(articles: Iterable[Article]) -> TaxArticlesUseCase:
     return TaxArticlesUseCase(articles=articles)

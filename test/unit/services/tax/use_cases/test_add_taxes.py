@@ -20,10 +20,10 @@ TEST_CASES = {
         input=[],
         expected=[],
     ),
-    'single, non-imported article': AddTaxesTestCase(
+    'non imported, exempt category article': AddTaxesTestCase(
         input=[
             article.Article(
-                product=product.Product(name='test', category='dummy'),
+                product=product.Product(name='test', category='food'),
                 quantity=2,
                 unit_price_before_taxes=Decimal('1'),
                 imported=False,
@@ -31,7 +31,7 @@ TEST_CASES = {
         ],
         expected=[
             taxed_article.TaxedArticle(
-                product=product.Product(name='test', category='dummy'),
+                product=product.Product(name='test', category='food'),
                 quantity=2,
                 imported=False,
                 unit_price_before_taxes=Decimal('1'),
@@ -39,12 +39,50 @@ TEST_CASES = {
             )
         ],
     ),
-    'single, imported article': AddTaxesTestCase(
+    'imported, exempt category article': AddTaxesTestCase(
+        input=[
+            article.Article(
+                product=product.Product(name='test', category='book'),
+                quantity=2,
+                unit_price_before_taxes=Decimal('1'),
+                imported=True,
+            ),
+        ],
+        expected=[
+            taxed_article.TaxedArticle(
+                product=product.Product(name='test', category='book'),
+                quantity=2,
+                imported=True,
+                unit_price_before_taxes=Decimal('1'),
+                tax_amount_due_per_unit=Decimal('0.05'),
+            )
+        ],
+    ),
+    'non imported, exempt category article': AddTaxesTestCase(
+        input=[
+            article.Article(
+                product=product.Product(name='test', category='food'),
+                quantity=2,
+                unit_price_before_taxes=Decimal('1'),
+                imported=False,
+            ),
+        ],
+        expected=[
+            taxed_article.TaxedArticle(
+                product=product.Product(name='test', category='food'),
+                quantity=2,
+                imported=False,
+                unit_price_before_taxes=Decimal('1'),
+                tax_amount_due_per_unit=Decimal('0.00'),
+            )
+        ],
+    ),
+    'imported, non-exempt category article': AddTaxesTestCase(
         input=[
             article.Article(
                 product=product.Product(name='test', category='dummy'),
                 quantity=2,
-                unit_price_before_taxes=Decimal('1'),
+                unit_price_before_taxes=Decimal('2'),
                 imported=True,
             ),
         ],
@@ -53,40 +91,53 @@ TEST_CASES = {
                 product=product.Product(name='test', category='dummy'),
                 quantity=2,
                 imported=True,
-                unit_price_before_taxes=Decimal('1'),
-                tax_amount_due_per_unit=Decimal('0'),
+                unit_price_before_taxes=Decimal('2'),
+                tax_amount_due_per_unit=Decimal('0.3'),
             )
         ],
     ),
     'multiple articles, mixed': AddTaxesTestCase(
         input=[
             article.Article(
-                product=product.Product(name='test', category='dummy'),
+                product=product.Product(name='exempt', category='medical'),
                 quantity=2,
                 unit_price_before_taxes=Decimal('1'),
                 imported=True,
             ),
             article.Article(
-                product=product.Product(name='test-2', category='dummy-2'),
+                product=product.Product(name='non-exempt', category='dummy-2'),
                 quantity=1,
                 unit_price_before_taxes=Decimal('2'),
                 imported=False,
+            ),
+            article.Article(
+                product=product.Product(name='non-exempt', category='dummy-2'),
+                quantity=1,
+                unit_price_before_taxes=Decimal('2'),
+                imported=True,
             ),
         ],
         expected=[
             taxed_article.TaxedArticle(
-                product=product.Product(name='test', category='dummy'),
+                product=product.Product(name='exempt', category='medical'),
                 quantity=2,
                 imported=True,
                 unit_price_before_taxes=Decimal('1'),
-                tax_amount_due_per_unit=Decimal('0'),
+                tax_amount_due_per_unit=Decimal('0.05'),
             ),
             taxed_article.TaxedArticle(
-                product=product.Product(name='test-2', category='dummy-2'),
+                product=product.Product(name='non-exempt', category='dummy-2'),
                 quantity=1,
                 imported=False,
                 unit_price_before_taxes=Decimal('2'),
-                tax_amount_due_per_unit=Decimal('0'),
+                tax_amount_due_per_unit=Decimal('0.2'),
+            ),
+            taxed_article.TaxedArticle(
+                product=product.Product(name='non-exempt', category='dummy-2'),
+                quantity=1,
+                imported=True,
+                unit_price_before_taxes=Decimal('2'),
+                tax_amount_due_per_unit=Decimal('0.3'),
             )
         ],
     ),
