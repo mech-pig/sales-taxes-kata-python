@@ -7,7 +7,7 @@ from taxes.services.receipt.service import (
     Dependency as ReceiptServiceDependency,
     ReceiptService,
 )
-from taxes.services.receipt.entities.receipt import ItemToInsert
+from taxes.services.receipt.entities.taxed_article import TaxedArticle
 from receipt.use_cases.test_create_receipt import create_receipt_test_cases
 
 
@@ -30,11 +30,12 @@ def test_create_returns_service(make_dependencies_fixture):
 def test_create_receipt_returns_receipt(case, make_dependencies_fixture):
     service = create_receipt_service(**make_dependencies_fixture())
     service.tax_service.add_taxes.return_value = [
-        ItemToInsert(
-            description=i.article.product.name,
+        TaxedArticle(
+            product=i.article.product,
             quantity=i.article.quantity,
+            imported=i.article.imported,
             unit_price_before_taxes=i.article.unit_price_before_taxes,
-            taxes_to_apply=i.taxes_to_apply,
+            tax_amount_due_per_unit=i.tax_amount_due_per_unit,
         ) for i in case.input
     ]
 

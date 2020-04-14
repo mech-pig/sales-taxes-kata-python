@@ -1,30 +1,28 @@
 from dataclasses import dataclass
+from decimal import Decimal
 from typing import Callable, Iterable
 
-from taxes.services.basket.entities.article import Article
-from taxes.services.receipt.entities.receipt import ItemToInsert
+from taxes.services.basket.entities import article
+from taxes.services.receipt.entities import taxed_article
 
 
 @dataclass
 class TaxArticlesUseCase:
-    articles: Iterable[Article]
+    articles: Iterable[article.Article]
 
-    def __call__(self, env: 'Environment') -> Iterable[ItemToInsert]:
+    def __call__(self, env: 'Environment') -> Iterable[taxed_article.TaxedArticle]:  # noqa: E501
         env.info('adding taxes to articles in basket')
-
-        def describe(article):
-            imported = 'imported ' if article.imported else ''
-            return f'{imported}{article.product.name}'
-
         taxed_items = [
-            ItemToInsert(
-                description=describe(article),
+            taxed_article.TaxedArticle(
+                product=article.product,
                 quantity=article.quantity,
+                imported=article.imported,
                 unit_price_before_taxes=article.unit_price_before_taxes,
-                taxes_to_apply=[],
+                tax_amount_due_per_unit=Decimal('0.00'),
             ) for article in self.articles
         ]
         env.info('taxes added')
+
         return taxed_items
 
 
@@ -33,5 +31,5 @@ class Environment:
     info: Callable[[str], None]
 
 
-def create(articles: Iterable[Article]) -> TaxArticlesUseCase:
+def create(articles: Iterable[article.Article]) -> TaxArticlesUseCase:
     return TaxArticlesUseCase(articles=articles)

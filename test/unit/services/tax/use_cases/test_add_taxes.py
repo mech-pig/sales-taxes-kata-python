@@ -5,91 +5,91 @@ from unittest.mock import Mock
 
 import pytest
 
-from taxes.services.basket.entities import article
-from taxes.services.receipt.entities import receipt
+from taxes.services.basket.entities import article, product
+from taxes.services.receipt.entities import taxed_article
 
 
 @dataclass
 class AddTaxesTestCase:
-    articles: List[article.Article]
-    expected: List[receipt.ItemToInsert]
+    input: List[article.Article]
+    expected: List[taxed_article.TaxedArticle]
 
 
 TEST_CASES = {
     'no articles': AddTaxesTestCase(
-        articles=[],
+        input=[],
         expected=[],
     ),
     'single, non-imported article': AddTaxesTestCase(
-        articles=[
-            article.create(
+        input=[
+            article.Article(
+                product=product.Product(name='test', category='dummy'),
                 quantity=2,
-                product_name='test',
-                product_category='cat-dummy',
                 unit_price_before_taxes=Decimal('1'),
                 imported=False,
             ),
         ],
         expected=[
-            receipt.ItemToInsert(
-                description='test',
+            taxed_article.TaxedArticle(
+                product=product.Product(name='test', category='dummy'),
                 quantity=2,
+                imported=False,
                 unit_price_before_taxes=Decimal('1'),
-                taxes_to_apply=[],
+                tax_amount_due_per_unit=Decimal('0'),
             )
         ],
     ),
     'single, imported article': AddTaxesTestCase(
-        articles=[
-            article.create(
+        input=[
+            article.Article(
+                product=product.Product(name='test', category='dummy'),
                 quantity=2,
-                product_name='test',
-                product_category='cat-dummy',
                 unit_price_before_taxes=Decimal('1'),
                 imported=True,
             ),
         ],
         expected=[
-            receipt.ItemToInsert(
-                description='imported test',
+            taxed_article.TaxedArticle(
+                product=product.Product(name='test', category='dummy'),
                 quantity=2,
+                imported=True,
                 unit_price_before_taxes=Decimal('1'),
-                taxes_to_apply=[],
+                tax_amount_due_per_unit=Decimal('0'),
             )
         ],
     ),
-    'multiple articles': AddTaxesTestCase(
-        articles=[
-            article.create(
+    'multiple articles, mixed': AddTaxesTestCase(
+        input=[
+            article.Article(
+                product=product.Product(name='test', category='dummy'),
                 quantity=2,
-                product_name='test',
-                product_category='cat-dummy',
                 unit_price_before_taxes=Decimal('1'),
-                imported=False,
-            ),
-            article.create(
-                quantity=3,
-                product_name='test-2',
-                product_category='cat-dummy',
-                unit_price_before_taxes=Decimal('2.34'),
                 imported=True,
+            ),
+            article.Article(
+                product=product.Product(name='test-2', category='dummy-2'),
+                quantity=1,
+                unit_price_before_taxes=Decimal('2'),
+                imported=False,
             ),
         ],
         expected=[
-            receipt.ItemToInsert(
-                description='test',
+            taxed_article.TaxedArticle(
+                product=product.Product(name='test', category='dummy'),
                 quantity=2,
+                imported=True,
                 unit_price_before_taxes=Decimal('1'),
-                taxes_to_apply=[],
+                tax_amount_due_per_unit=Decimal('0'),
             ),
-            receipt.ItemToInsert(
-                description='imported test-2',
-                quantity=3,
-                unit_price_before_taxes=Decimal('2.34'),
-                taxes_to_apply=[],
+            taxed_article.TaxedArticle(
+                product=product.Product(name='test-2', category='dummy-2'),
+                quantity=1,
+                imported=False,
+                unit_price_before_taxes=Decimal('2'),
+                tax_amount_due_per_unit=Decimal('0'),
             )
         ],
-    )
+    ),
 }
 
 

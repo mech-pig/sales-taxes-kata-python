@@ -27,4 +27,4 @@ def test_create_returns_service(make_dependencies_fixture):
 @add_taxes_test_cases
 def test_add_taxes_returns_taxed_items(case, make_dependencies_fixture):
     service = create_tax_service(**make_dependencies_fixture())
-    assert case.expected == service.add_taxes(articles=case.articles)
+    assert case.expected == service.add_taxes(articles=case.input)
