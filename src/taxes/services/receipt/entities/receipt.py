@@ -3,7 +3,7 @@ from dataclasses import dataclass
 from decimal import Decimal
 from typing import List
 
-from taxes.services.receipt.entities import tax
+from taxes.services.tax.entities import tax
 
 
 @dataclass(frozen=True)

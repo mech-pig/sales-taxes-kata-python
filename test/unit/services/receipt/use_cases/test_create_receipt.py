@@ -6,8 +6,9 @@ from unittest.mock import call, Mock
 import pytest
 
 from taxes.services.basket.entities import article
-from taxes.services.receipt.entities import receipt, tax
+from taxes.services.receipt.entities import receipt
 from taxes.services.receipt.use_cases import create_receipt
+from taxes.services.tax.entities import tax
 
 
 @dataclass
