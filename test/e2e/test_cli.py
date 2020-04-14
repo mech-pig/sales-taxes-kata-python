@@ -159,29 +159,28 @@ TEST_CASES = {
             Total: 65.15
         """
     ),
-    # TODO detect imported label in the middle of the string
-    # 'imported articles (interleaved imported label)': CliTestCase(
-    #     input="""
-    #         1 imported bottle of perfume at 27.99
-    #         1 bottle of perfume at 18.99
-    #         1 packet of headache pills at 9.75
-    #         1 imported box of chocolates at 11.25
-    #     """,
-    #     expected="""
-    #         1 imported bottle of perfume: 32.19
-    #         1 bottle of perfume: 20.89
-    #         1 packet of headache pills: 9.75
-    #         1 imported box of chocolates: 11.85
-    #         Sales Taxes: 6.70
-    #         Total: 74.68
-    #     """
-    # ),
+    'imported articles (interleaved imported label)': CliTestCase(
+        input="""
+            1 imported bottle of perfume at 27.99
+            1 bottle of perfume at 18.99
+            1 packet of headache pills at 9.75
+            1 imported box of chocolates at 11.25
+        """,
+        expected="""
+            1 imported bottle of perfume: 32.19
+            1 bottle of perfume: 20.89
+            1 packet of headache pills: 9.75
+            1 imported box of chocolates: 11.85
+            Sales Taxes: 6.70
+            Total: 74.68
+        """
+    ),
     'imported articles, exempt and non-exempt': CliTestCase(
         input="""
             1 imported bottle of perfume at 27.99
             1 bottle of perfume at 18.99
             1 packet of headache pills at 9.75
-            3 imported box of chocolates at 11.25
+            3 box of imported chocolates at 11.25
         """,
         expected="""
             1 imported bottle of perfume: 32.19

@@ -32,26 +32,37 @@ parse_row = re.compile(RE_PARSE_ROW).match
 IMPORTED_LABEL = 'imported'
 
 
+def parse_description(description):
+    tokens = description.split()
+    lowercase_tokens = [t.lower() for t in tokens]
+    try:
+        imported_token_location = lowercase_tokens.index(IMPORTED_LABEL)
+    except ValueError:
+        return {
+            'imported': False,
+            'product_name': ' '.join(tokens)
+        }
+    else:
+        imported_token = tokens[imported_token_location]
+        tokens.remove(imported_token)
+        return {
+            'imported': True,
+            'product_name': ' '.join(tokens)
+        }
+
+
 def parse_item(input: str) -> PurchasedItem:
     """ Parses the :param input: string and returns a PurchasedItem. """
     parsed = parse_row(input)
+
     if not parsed:
         raise ParserError.MalformedInput()
 
-    product_description = parsed['product_description']
-    if product_description.startswith(IMPORTED_LABEL):
-        imported = True
-        _, product_name = product_description.split(
-            sep=IMPORTED_LABEL,
-            maxsplit=1,
-        )
-    else:
-        imported = False
-        product_name = product_description
+    parsed_description = parse_description(parsed['product_description'])
 
     return PurchasedItem(
         quantity=int(parsed['quantity']),
-        product_name=product_name.strip(),
+        product_name=parsed_description['product_name'],
         unit_price=Decimal(parsed['unit_price']),
-        imported=imported,
+        imported=parsed_description['imported'],
     )
