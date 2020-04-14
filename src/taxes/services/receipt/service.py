@@ -2,7 +2,7 @@ from dataclasses import dataclass
 from typing import Iterable, Protocol
 
 from taxes.services.basket.entities.article import Article
-from taxes.services.receipt.entities.receipt import ItemToInsert
+from taxes.services.receipt.entities.taxed_article import TaxedArticle
 from taxes.services.receipt.use_cases import (
     create_receipt as create_receipt_use_case,
 )
@@ -34,7 +34,7 @@ class Dependency:
         def add_taxes(
             self,
             articles: Iterable[Article]
-        ) -> Iterable[ItemToInsert]:  # pragma: no cover
+        ) -> Iterable[TaxedArticle]:  # pragma: no cover
             ...
 
 

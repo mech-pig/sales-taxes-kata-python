@@ -2,7 +2,7 @@ from dataclasses import dataclass
 from typing import Iterable, Protocol
 
 from taxes.services.basket.entities.article import Article
-from taxes.services.receipt.entities.receipt import ItemToInsert
+from taxes.services.receipt.entities.taxed_article import TaxedArticle
 from taxes.services.tax.use_cases import tax_articles as tax_articles_use_case
 
 
@@ -10,7 +10,7 @@ from taxes.services.tax.use_cases import tax_articles as tax_articles_use_case
 class TaxService:
     logger: 'Dependency.Logger'
 
-    def add_taxes(self, articles: Iterable[Article]) -> Iterable[ItemToInsert]:
+    def add_taxes(self, articles: Iterable[Article]) -> Iterable[TaxedArticle]:
         tax_articles = tax_articles_use_case.create(articles=articles)
         env = tax_articles_use_case.Environment(
             info=self.logger.info,
