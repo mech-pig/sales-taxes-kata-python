@@ -133,21 +133,20 @@ TEST_CASES = {
             Total: 109.15
         """
     ),
-    # TODO keep casing
-    # 'mixed': CliTestCase(
-    #     input="""
-    #         1 book at 12.49
-    #         1 music CD at 14.99
-    #         1 chocolate bar at 0.85
-    #     """,
-    #     expected="""
-    #         1 book: 12.49
-    #         1 music CD: 16.49
-    #         1 chocolate bar: 0.85
-    #         Sales Taxes: 1.50
-    #         Total: 29.83
-    #     """
-    # ),
+    'non imported articles, exempt and non-exempt': CliTestCase(
+        input="""
+            1 book at 12.49
+            1 music CD at 14.99
+            1 chocolate bar at 0.85
+        """,
+        expected="""
+            1 book: 12.49
+            1 music CD: 16.49
+            1 chocolate bar: 0.85
+            Sales Taxes: 1.50
+            Total: 29.83
+        """
+    ),
     'imported articles, exempt and non-exempt': CliTestCase(
         input="""
             1 imported box of chocolates at 10.00

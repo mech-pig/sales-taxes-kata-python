@@ -51,7 +51,7 @@ def parse_item(input: str) -> PurchasedItem:
 
     return PurchasedItem(
         quantity=int(parsed['quantity']),
-        product_name=product_name.strip().lower(),
+        product_name=product_name.strip(),
         unit_price=Decimal(parsed['unit_price']),
         imported=imported,
     )
