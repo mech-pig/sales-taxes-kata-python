@@ -156,8 +156,19 @@ def test_command_returns_success_status_when_called_with_help_option(entrypoint,
 @entrypoint_test_cases
 def test_command_prints_help_text_to_stdout_when_called_with_help_option(entrypoint, help_opt):
     result = subprocess.run([entrypoint, help_opt], capture_output=True, encoding='utf-8')
-    expected = 'usage: receipt [-h] [-i BASKET]'
+    expected = 'usage: receipt [-h] -i BASKET'
     assert result.stdout.startswith(expected)
+
+
+@entrypoint_test_cases
+def test_command_exits_with_error_if_input_options_is_not_set(entrypoint):
+    result = subprocess.run([entrypoint], capture_output=True, encoding='utf-8')
+    expected = (
+        'usage: receipt [-h] -i BASKET\n',
+        'error: receipt: error: the following arguments are required: -i/--input\n',
+    )
+    assert SUCCESS_STATUS != result.returncode
+    assert result.stderr.startswith(expected)
 
 
 @cli_test_cases

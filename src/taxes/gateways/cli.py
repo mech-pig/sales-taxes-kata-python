@@ -18,6 +18,7 @@ parser.add_argument(
     '--input',
     metavar='BASKET',
     help='a path to a file containing a basket',
+    required=True,
 )
 
 
