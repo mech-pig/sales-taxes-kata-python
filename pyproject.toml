@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "taxes"
-version = "0.0.0"
+version = "1.0.0"
 description = "Sales taxes kata, solved in Python."
 repository = "https://github.com/mech-pig/sales-taxes-kata-python"
 authors = ["mechpig <7295856+mech-pig@users.noreply.github.com>"]

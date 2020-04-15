@@ -1,0 +1,59 @@
+<a name="unreleased"></a>
+## [Unreleased]
+
+
+<a name="1.0.0"></a>
+## 1.0.0 - 2020-04-15
+
+### Added
+- support verbosity in cli (#71)
+- tax article according to origin and product category (#43)
+- product category (#40)
+- expose receipt service through cli gateway (#27)
+- tax service entrypoint (#26)
+- basket service entrypoint (#25)
+- receipt service
+- create receipt use case
+- receipt module
+- tax module
+- `CreateBasket` use case
+- cli gateway
+- item factory
+- parse item unit price
+- parse item name
+- parse item quantity
+
+### Changed
+- remove __version__ from main module (#95)
+- validate product name (#82)
+- remove unused quantity newtype (#85)
+- detect imported label even in the middle of the product description (#67)
+- don't modify case of extracted text in parser (#79)
+- make TaxService.add_taxes return a list of TaxedArticles (#75)
+- move tax module under tax service package (#73)
+- make create_basket use case return products from product repository (#42)
+- make cli input option required (#64)
+- move unit_price from product to article (#61)
+- add imported flag to article (#41)
+- make BasketService.create_service accept a list of PurchasedItem (#50)
+- make BasketService.create_basket return list of added articles (#51)
+- split `Article` into product and quantity
+- rename item as article
+- remove unused InvalidItemError
+- make parser raise its own errors
+- make parser return dict instead of item
+
+### Fixed
+- round tax amount due per unit up to nearest 0.05 (#77)
+
+### Refactored
+- create controller for cli gateway (#90)
+- remove anemic factories (#84)
+- remove basket service dependency from receipt service (#52)
+- move services to dedicated modules (#53)
+- improve naming of receipt module
+- create basket service
+- organize code in services
+
+
+[Unreleased]: /compare/1.0.0...HEAD
