@@ -1,7 +1,10 @@
 from dataclasses import dataclass
 from decimal import Decimal
 
-from taxes.services.basket.entities.product import Product
+from taxes.services.basket.entities.product import (
+    Product,
+    create as create_product,
+)
 
 
 @dataclass(frozen=True)
@@ -44,7 +47,7 @@ def create(
         raise ArticleError.NegativeUnitPrice(unit_price_before_taxes)
 
     return Article(
-        product=Product(
+        product=create_product(
             name=product_name,
             category=product_category,
         ),
