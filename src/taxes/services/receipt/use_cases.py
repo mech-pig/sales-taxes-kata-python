@@ -18,6 +18,7 @@ class CreateReceiptUseCase:
     @dataclass
     class Environment:
         info: Callable[[str], None]
+        debug: Callable[[str], None]
         add_taxes: Callable[[Iterable[Article]], Iterable[TaxedArticle]]
 
     def __call__(self, env: Environment) -> Receipt:
@@ -26,7 +27,7 @@ class CreateReceiptUseCase:
         env.info('taxes added')
 
         def add_article_to_receipt(receipt, taxed_article):
-            env.info(f'adding {taxed_article} to {receipt}')
+            env.debug(f'adding {taxed_article} to {receipt}')
             return add_to_receipt(taxed_article, receipt)
 
         env.info('creating receipt')

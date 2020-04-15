@@ -14,20 +14,21 @@ class TaxArticlesUseCase:
     @dataclass
     class Environment:
         info: Callable[[str], None]
+        debug: Callable[[str], None]
 
     def __call__(self, env: Environment) -> Iterable[TaxedArticle]:
         env.info('adding taxes to articles in basket')
 
         def tax_article(article):
-            env.info(f'get applicable taxes for {article}')
+            env.debug(f'get applicable taxes for {article}')
             taxes_to_apply = get_applicable_taxes(article)
 
-            env.info(f'taxes to apply: {taxes_to_apply}')
+            env.debug(f'taxes to apply: {taxes_to_apply}')
             tax_amount_due_per_unit = apply_taxes(
                 price=article.unit_price_before_taxes,
                 taxes=taxes_to_apply
             )
-            env.info(f'tax amount due per unit: {tax_amount_due_per_unit}')
+            env.debug(f'tax amount due per unit: {tax_amount_due_per_unit}')
 
             taxed_article = TaxedArticle(
                 product=article.product,
@@ -36,7 +37,7 @@ class TaxArticlesUseCase:
                 unit_price_before_taxes=article.unit_price_before_taxes,
                 tax_amount_due_per_unit=tax_amount_due_per_unit,
             )
-            env.info(f'taxes have been applied: {taxed_article}')
+            env.debug(f'taxes have been applied: {taxed_article}')
             return taxed_article
 
         taxed_articles = [tax_article(article) for article in self.articles]

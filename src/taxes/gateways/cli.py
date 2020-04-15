@@ -18,6 +18,8 @@ class CliController:
         encoding: str
 
     def __init__(self, config: Config):
+        logging.basicConfig(level=config.log_level)
+
         basket_service = create_basket_service(
             logger=logging.getLogger('basket'),
             product_repository=KATA_EXAMPLE_PRODUCT_REPOSITORY,
@@ -75,12 +77,30 @@ def parse_args():
         help='a path to a file containing a basket',
         required=True,
     )
+    parser.add_argument(
+        '-v',
+        '--verbose',
+        help='set verbosity level',
+        action='count',
+        default=0,
+    )
     return parser.parse_args()
+
+
+def log_level_from_verbosity(verbosity: int):
+    if verbosity > 1:
+        return logging.DEBUG
+    elif verbosity > 0:
+        return logging.INFO
+    return logging.ERROR
 
 
 def main():
     args = parse_args()
-    config = CliController.Config(log_level='ERROR', encoding='utf-8')
+    config = CliController.Config(
+        log_level=log_level_from_verbosity(args.verbose),
+        encoding='utf-8',
+    )
     controller = CliController(config=config)
 
     printed_receipt = controller.print_receipt(args.input)

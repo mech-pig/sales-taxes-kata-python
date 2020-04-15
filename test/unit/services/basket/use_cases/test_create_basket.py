@@ -118,7 +118,7 @@ create_basket_test_cases = pytest.mark.parametrize(
 
 
 @pytest.fixture
-def info():
+def log():
     def noop(msg: str):
         pass
     return Mock(wraps=noop)
@@ -135,10 +135,11 @@ def make_get_product_fixture():
 
 
 @pytest.fixture
-def make_env_fixture(info, make_get_product_fixture):
+def make_env_fixture(log, make_get_product_fixture):
     def build(input: CreateBasketTestCase.TestCaseInput, **overrides):
         return CreateBasketUseCase.Environment(**{
-            'info': info,
+            'info': log,
+            'debug': log,
             'get_product_by_name': make_get_product_fixture(input),
             **overrides,
         })

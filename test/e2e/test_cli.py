@@ -19,6 +19,12 @@ file_input_option_test_cases = pytest.mark.parametrize('file_input_opt', [
     '-i',
 ])
 
+verbosity_option_test_cases = pytest.mark.parametrize('verbosity', [
+    '',
+    '-v',
+    '-vv',
+])
+
 
 @dataclass
 class CliTestCase:
@@ -204,26 +210,44 @@ cli_test_cases = pytest.mark.parametrize(
 SUCCESS_STATUS = 0
 
 
+@verbosity_option_test_cases
 @help_option_test_cases
 @entrypoint_test_cases
-def test_command_returns_success_status_when_called_with_help_option(entrypoint, help_opt):
-    result = subprocess.run([entrypoint, help_opt], capture_output=True, encoding='utf-8')
+def test_command_returns_success_status_when_called_with_help_option(
+    entrypoint,
+    help_opt,
+    verbosity,
+):
+    command = [entrypoint, help_opt, verbosity]
+    result = subprocess.run(command, capture_output=True, encoding='utf-8')
     assert SUCCESS_STATUS == result.returncode
 
 
+
+@verbosity_option_test_cases
 @help_option_test_cases
 @entrypoint_test_cases
-def test_command_prints_help_text_to_stdout_when_called_with_help_option(entrypoint, help_opt):
-    result = subprocess.run([entrypoint, help_opt], capture_output=True, encoding='utf-8')
-    expected = 'usage: receipt [-h] -i BASKET'
+def test_command_prints_help_text_to_stdout_when_called_with_help_option(
+    entrypoint,
+    help_opt,
+    verbosity,
+):
+    command = [entrypoint, help_opt, verbosity]
+    result = subprocess.run(command, capture_output=True, encoding='utf-8')
+    expected = 'usage: receipt [-h] -i BASKET [-v]'
     assert result.stdout.startswith(expected)
 
 
+@verbosity_option_test_cases
 @entrypoint_test_cases
-def test_command_exits_with_error_if_input_options_is_not_set(entrypoint):
-    result = subprocess.run([entrypoint], capture_output=True, encoding='utf-8')
+def test_command_exits_with_error_if_input_options_is_not_set(
+    entrypoint,
+    verbosity,
+):
+    command = [entrypoint, verbosity]
+    result = subprocess.run(command, capture_output=True, encoding='utf-8')
     expected = (
-        'usage: receipt [-h] -i BASKET\n',
+        'usage: receipt [-h] -i BASKET [-v]\n',
         'error: receipt: error: the following arguments are required: -i/--input\n',
     )
     assert SUCCESS_STATUS != result.returncode
@@ -231,18 +255,23 @@ def test_command_exits_with_error_if_input_options_is_not_set(entrypoint):
 
 
 @cli_test_cases
+@verbosity_option_test_cases
 @file_input_option_test_cases
 @entrypoint_test_cases
 def test_command_prints_receipt_to_stdout_when_basket_is_submitted_as_file(
     entrypoint,
     file_input_opt,
+    verbosity,
     case,
     tmp_path,
 ):
     basket_path = tmp_path / "basket.txt"
     basket_path.write_text(case.input)
-    command = [entrypoint, file_input_opt, basket_path]
+    if verbosity:
+        command = [entrypoint, file_input_opt, basket_path, verbosity]
+    else:
+        command = [entrypoint, file_input_opt, basket_path]
     result = subprocess.run(command, capture_output=True, encoding='utf-8')
 
     assert SUCCESS_STATUS == result.returncode
-    assert case.expected == result.stdout
+    assert result.stdout.endswith(case.expected)
