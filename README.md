@@ -4,6 +4,7 @@ The classic sales taxes kata, in python.
 
 - [Installation](#installation)
   - [Local](#local)
+  - [Docker](#docker)
 - [Usage](#usage)
 - [The Kata](#the-kata)
   - [Examples](#examples)
@@ -37,6 +38,20 @@ receipt -h
 Deactivate the environment with:
 ```sh
 deactivate
+```
+
+### Docker
+
+#### Build
+Build a Docker container with
+```sh
+docker build -t sales-taxes .
+```
+
+#### Run
+Run the command with
+```sh
+docker run -v "$PWD/examples:/usr/app/examples" --rm sales-taxes -i /usr/app/examples/new-products.txt
 ```
 
 ## Usage
