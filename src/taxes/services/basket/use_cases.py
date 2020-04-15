@@ -19,7 +19,12 @@ from taxes.services.basket.entities.purchased_item import PurchasedItem
 class CreateBasketUseCase:
     purchased_items: Iterable[PurchasedItem]
 
-    def __call__(self, env: 'Environment') -> Iterable[Article]:
+    @dataclass
+    class Environment:
+        info: Callable[[str], None]
+        get_product_by_name: Callable[[str], Product]
+
+    def __call__(self, env: Environment) -> Iterable[Article]:
         env.info('creating basket')
 
         def add_item(basket: Basket, item: PurchasedItem):
@@ -41,13 +46,3 @@ class CreateBasketUseCase:
 
         basket = reduce(add_item, self.purchased_items, create_empty_basket())
         return list_articles_in_basket(basket)
-
-
-@dataclass
-class Environment:
-    info: Callable[[str], None]
-    get_product_by_name: Callable[[str], Product]
-
-
-def create(purchased_items: Iterable[PurchasedItem]) -> CreateBasketUseCase:
-    return CreateBasketUseCase(purchased_items=purchased_items)

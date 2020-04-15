@@ -8,7 +8,7 @@ import pytest
 from taxes.services.basket.entities import article
 from taxes.services.receipt.entities import receipt
 from taxes.services.receipt.entities.taxed_article import TaxedArticle
-from taxes.services.receipt.use_cases import create_receipt
+from taxes.services.receipt.use_cases import CreateReceiptUseCase
 
 
 @dataclass
@@ -265,7 +265,7 @@ def make_add_taxes_fixture():
 @pytest.fixture
 def make_env_fixture(info, make_add_taxes_fixture):
     def build(params, **overrides):
-        return create_receipt.Environment(**{
+        return CreateReceiptUseCase.Environment(**{
             'info': info,
             'add_taxes': make_add_taxes_fixture(params),
             **overrides,
@@ -274,16 +274,9 @@ def make_env_fixture(info, make_add_taxes_fixture):
 
 
 @create_receipt_test_cases
-def test_create_returns_use_case(case):
-    articles = [i.article for i in case.input]
-    run = create_receipt.create(articles=articles)
-    assert isinstance(run, create_receipt.CreateReceiptUseCase)
-
-
-@create_receipt_test_cases
 def test_use_case_returns_receipt_from_articles(case, make_env_fixture):
     articles = [i.article for i in case.input]
-    run = create_receipt.create(articles=articles)
+    run = CreateReceiptUseCase(articles=articles)
     env = make_env_fixture(case.input)
     assert case.expected == run(env)
 
@@ -291,7 +284,7 @@ def test_use_case_returns_receipt_from_articles(case, make_env_fixture):
 @create_receipt_test_cases
 def test_use_case_calls_add_taxes_with_articles(case, make_env_fixture):
     articles = [i.article for i in case.input]
-    run = create_receipt.create(articles=articles)
+    run = CreateReceiptUseCase(articles=articles)
     env = make_env_fixture(case.input)
     run(env)
     assert [call(articles)] == env.add_taxes.call_args_list

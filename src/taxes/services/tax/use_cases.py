@@ -11,7 +11,11 @@ from taxes.services.tax.entities.tax import apply as apply_taxes
 class TaxArticlesUseCase:
     articles: Iterable[Article]
 
-    def __call__(self, env: 'Environment') -> Iterable[TaxedArticle]:
+    @dataclass
+    class Environment:
+        info: Callable[[str], None]
+
+    def __call__(self, env: Environment) -> Iterable[TaxedArticle]:
         env.info('adding taxes to articles in basket')
 
         def tax_article(article):
@@ -39,12 +43,3 @@ class TaxArticlesUseCase:
         env.info('taxes added')
 
         return taxed_articles
-
-
-@dataclass
-class Environment:
-    info: Callable[[str], None]
-
-
-def create(articles: Iterable[Article]) -> TaxArticlesUseCase:
-    return TaxArticlesUseCase(articles=articles)

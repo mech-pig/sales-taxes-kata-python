@@ -8,7 +8,7 @@ import pytest
 from taxes.services.basket.entities import article
 from taxes.services.basket.entities.product import Product
 from taxes.services.basket.entities.purchased_item import PurchasedItem
-from taxes.services.basket.use_cases import create_basket
+from taxes.services.basket.use_cases import CreateBasketUseCase
 
 
 @dataclass
@@ -137,7 +137,7 @@ def make_get_product_fixture():
 @pytest.fixture
 def make_env_fixture(info, make_get_product_fixture):
     def build(input: CreateBasketTestCase.TestCaseInput, **overrides):
-        return create_basket.Environment(**{
+        return CreateBasketUseCase.Environment(**{
             'info': info,
             'get_product_by_name': make_get_product_fixture(input),
             **overrides,
@@ -146,13 +146,7 @@ def make_env_fixture(info, make_get_product_fixture):
 
 
 @create_basket_test_cases
-def test_create_returns_use_case(case):
-    run = create_basket.create(purchased_items=case.input.purchased_items)
-    assert isinstance(run, create_basket.CreateBasketUseCase)
-
-
-@create_basket_test_cases
 def test_use_cases_return_list_of_articles_in_basket(case, make_env_fixture):
-    run = create_basket.create(purchased_items=case.input.purchased_items)
+    run = CreateBasketUseCase(purchased_items=case.input.purchased_items)
     env = make_env_fixture(case.input)
     assert case.expected == run(env)
