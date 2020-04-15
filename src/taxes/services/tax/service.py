@@ -12,7 +12,10 @@ class TaxService:
 
     def add_taxes(self, articles: Iterable[Article]) -> Iterable[TaxedArticle]:
         tax_articles = TaxArticlesUseCase(articles=articles)
-        env = TaxArticlesUseCase.Environment(info=self.logger.info)
+        env = TaxArticlesUseCase.Environment(
+            info=self.logger.info,
+            debug=self.logger.debug,
+        )
         return tax_articles(env)
 
 
@@ -26,5 +29,5 @@ class Dependency:
 
 
 def create(logger: Dependency.Logger):
-    logger.debug(f'instantiating tax service with logger={logger}')
+    logger.debug('instantiating tax service')
     return TaxService(logger=logger)

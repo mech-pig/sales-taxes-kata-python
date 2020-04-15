@@ -241,7 +241,7 @@ create_receipt_test_cases = pytest.mark.parametrize(
 
 
 @pytest.fixture
-def info():
+def log():
     def noop(msg: str):
         pass
     return Mock(wraps=noop)
@@ -263,10 +263,11 @@ def make_add_taxes_fixture():
 
 
 @pytest.fixture
-def make_env_fixture(info, make_add_taxes_fixture):
+def make_env_fixture(log, make_add_taxes_fixture):
     def build(params, **overrides):
         return CreateReceiptUseCase.Environment(**{
-            'info': info,
+            'info': log,
+            'debug': log,
             'add_taxes': make_add_taxes_fixture(params),
             **overrides,
         })

@@ -18,6 +18,7 @@ class BasketService:
         run = CreateBasketUseCase(purchased_items=purchased_items)
         env = CreateBasketUseCase.Environment(
             info=self.logger.info,
+            debug=self.logger.debug,
             get_product_by_name=self.product_repository.get_by_name,
         )
         return run(env)
@@ -40,8 +41,5 @@ def create(
     logger: Dependency.Logger,
     product_repository=Dependency.ProductRepository,
 ):
-    logger.debug(
-        f'instantiating basket service ',
-        f'with logger={logger} and product_repository={product_repository}',
-    )
+    logger.debug('instantiating basket service')
     return BasketService(logger=logger, product_repository=product_repository)

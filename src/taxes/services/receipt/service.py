@@ -15,6 +15,7 @@ class ReceiptService:
         run = CreateReceiptUseCase(articles=articles)
         env = CreateReceiptUseCase.Environment(
             info=self.logger.info,
+            debug=self.logger.debug,
             add_taxes=self.tax_service.add_taxes,
         )
         return run(env)
@@ -37,8 +38,5 @@ class Dependency:
 
 
 def create(logger: Dependency.Logger, tax_service: Dependency.TaxService):
-    logger.debug(
-        f'instantiating receipt service ',
-        f'with logger={logger} and tax_service={tax_service}'
-    )
+    logger.debug('instantiating receipt service')
     return ReceiptService(logger=logger, tax_service=tax_service)

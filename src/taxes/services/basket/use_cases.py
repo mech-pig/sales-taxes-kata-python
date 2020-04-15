@@ -22,17 +22,18 @@ class CreateBasketUseCase:
     @dataclass
     class Environment:
         info: Callable[[str], None]
+        debug: Callable[[str], None]
         get_product_by_name: Callable[[str], Product]
 
     def __call__(self, env: Environment) -> Iterable[Article]:
         env.info('creating basket')
 
         def add_item(basket: Basket, item: PurchasedItem):
-            env.info(f'creating article from {item}')
+            env.debug(f'creating article from {item}')
 
-            env.info(f'getting product {item.product_name}')
+            env.debug(f'getting product {item.product_name}')
             product = env.get_product_by_name(name=item.product_name)
-            env.info(f'product {product} retrieved')
+            env.debug(f'product {product} retrieved')
 
             article = create_article(
                 quantity=item.quantity,
@@ -41,8 +42,10 @@ class CreateBasketUseCase:
                 unit_price_before_taxes=item.unit_price,
                 imported=item.imported,
             )
-            env.info(f'adding {article} to {basket}')
+            env.debug(f'added {article} to {basket}')
             return add_article_to_basket(article, basket)
 
         basket = reduce(add_item, self.purchased_items, create_empty_basket())
+        env.info('basket created')
+
         return list_articles_in_basket(basket)
