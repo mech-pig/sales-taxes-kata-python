@@ -65,7 +65,6 @@ changelog:
 release: test
 	$(MAKE) bump INCREMENT=$(INCREMENT)
 	$(MAKE) changelog
-	$(MAKE) docs
 	git add . && git commit -m "release: $(VERSION)" && git tag -a "$(VERSION)" -m $(VERSION)
 
 .PHONY: major
