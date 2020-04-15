@@ -1,5 +1,6 @@
 import argparse
 import logging
+from dataclasses import dataclass
 
 from taxes.adapters.product_repository import KATA_EXAMPLE_PRODUCT_REPOSITORY
 from taxes.services.basket.service import create as create_basket_service
@@ -9,59 +10,78 @@ from taxes.services.parser import parse_item
 from taxes.services.tax.service import create as create_tax_service
 
 
-parser = argparse.ArgumentParser(
-    prog='receipt',
-    description='Add taxes to purchased items and prints the receipt.',
-)
+class CliController:
 
-parser.add_argument(
-    '-i',
-    '--input',
-    metavar='BASKET',
-    help='a path to a file containing a basket',
-    required=True,
-)
+    @dataclass
+    class Config:
+        log_level: str
+        encoding: str
 
+    def __init__(self, config: Config):
+        basket_service = create_basket_service(
+            logger=logging.getLogger('basket'),
+            product_repository=KATA_EXAMPLE_PRODUCT_REPOSITORY,
+        )
 
-def load_basket_file(file):
-    with open(file, mode='r', encoding='utf-8') as f:
-        return [parse_item(row) for row in f]
+        tax_service = create_tax_service(
+            logger=logging.getLogger('tax'),
+        )
 
+        receipt_service = create_receipt_service(
+            logger=logging.getLogger('receipt'),
+            tax_service=tax_service,
+        )
 
-def dump_receipt(receipt: Receipt):
-    def dump_item(item: ReceiptItem):
-        return ' '.join([
-            f'{item.quantity}',
-            f'{item.description}:',
-            f'{item.subtotal_price_with_taxes}'
+        self.config = config
+        self.create_basket = basket_service.create_basket
+        self.create_receipt = receipt_service.create_receipt
+
+    def load_purchased_items(self, filepath):
+        with open(filepath, mode='r', encoding=self.config.encoding) as f:
+            return [parse_item(row) for row in f]
+
+    @staticmethod
+    def receipt_to_str(receipt: Receipt):
+        def item_to_str(item: ReceiptItem):
+            return ' '.join([
+                f'{item.quantity}',
+                f'{item.description}:',
+                f'{item.subtotal_price_with_taxes}'
+            ])
+
+        return '\n'.join([
+            *[item_to_str(item) for item in receipt.items],
+            f'Sales Taxes: {receipt.taxes_due}',
+            f'Total: {receipt.total_due}',
         ])
 
-    return '\n'.join([
-        *[dump_item(item) for item in receipt.items],
-        f'Sales Taxes: {receipt.taxes_due}',
-        f'Total: {receipt.total_due}',
-    ])
+    def print_receipt(self, purchased_items_filepath: str) -> str:
+        purchased_items = self.load_purchased_items(purchased_items_filepath)
+        articles_in_basket = self.create_basket(purchased_items)
+        receipt = self.create_receipt(articles_in_basket)
+        printed_receipt = self.receipt_to_str(receipt)
+        return printed_receipt
+
+
+def parse_args():
+    parser = argparse.ArgumentParser(
+        prog='receipt',
+        description='Add taxes to purchased items and prints the receipt.',
+    )
+    parser.add_argument(
+        '-i',
+        '--input',
+        metavar='BASKET',
+        help='a path to a file containing a basket',
+        required=True,
+    )
+    return parser.parse_args()
 
 
 def main():
-    tax_service = create_tax_service(
-        logger=logging.getLogger('tax'),
-    )
-    basket_service = create_basket_service(
-        logger=logging.getLogger('basket'),
-        product_repository=KATA_EXAMPLE_PRODUCT_REPOSITORY,
-    )
-    receipt_service = create_receipt_service(
-        logger=logging.getLogger('receipt'),
-        tax_service=tax_service,
-    )
+    args = parse_args()
+    config = CliController.Config(log_level='ERROR', encoding='utf-8')
+    controller = CliController(config=config)
 
-    args = parser.parse_args()
-    if not args.input:
-        parser.print_help()
-
-    purchased_articles = load_basket_file(args.input)
-    articles_in_basket = basket_service.create_basket(purchased_articles)
-    receipt = receipt_service.create_receipt(articles=articles_in_basket)
-    result = dump_receipt(receipt)
-    print(result)
+    printed_receipt = controller.print_receipt(args.input)
+    print(printed_receipt)
